@@ -222,3 +222,19 @@ Previous run archived to archive/2026-06-30-initial-scaffold/
   - The enforcement now lives in three layers: instruction (CLAUDE.md + AGENTS.md, read DESIGN.md every loop), memory (this Codebase Patterns line), and review (checklist.md standing reviewer gate). Keep all three in sync if the design rule ever changes.
   - PRD-01 (Design System) is complete: all 9 stories pass. Next is PRD-02 (Landing Page, ralph/landing-page) or PRD-03 (App MVP, ralph/app-mvp), both of which consume design/tokens.css (web) / design/theme.ts + design/fonts/ (RN).
 ---
+
+## [2026-07-01 00:30] - Visual QA + Partiful cross-reference (post-PRD-01)
+- Implemented: Visual QA pass over the rendered showcase (all 12 sections at desktop 1280px + mobile 390px, plus modal/sheet/paywall overlays), a cross-reference of the live implementation against the canonical Partiful DESIGN.md, one product-scope change (paywall), and one mobile fix.
+- Partiful cross-reference verdict: HOLDS TRUE. Action system (black/white, no colored buttons), gradients (surfaces/overlays only — CTA backgroundImage:none verified), type scale (11/14/18/24/36/48 + tracking), 12 colors + 3 status, 960px pills, Warm-Sand-only-for-active, max-2-type-sizes-per-card, and display-face-only-≥26px all match. The one intentional, documented deviation from the original Partiful doc is the font substitution (Space Grotesk ⇄ Partiful Display Medium; Inter ⇄ TWK Lausanne Pan) — codified in DESIGN.md:29-38 and forced by licensing (Cabinet Grotesk was removed in the first QA). Not drift.
+- Files changed:
+  - design/showcase/src/App.tsx — removed the Paywall section, its nav/TOC entry, the PAYWALL_PLANS const, the PaywallSurface component, and the Paywall import. Showcase now renders 11 sections (Foundations + Core controls / Feed / Cards & surfaces).
+  - design/showcase/src/components.css — mobile plan-price fix: at <=520px the price steps --text-heading-lg → --text-heading and drops its left indent (padding-left:0) so $39.99 /yr never crowds the card edge. Token-only.
+  - prd.json — US-007 + US-008 notes record the app-only paywall scope decision + the price fix (passes unchanged; the Paywall component is retained/exported, just not showcased).
+- Decision (product owner): the Paywall is an APP-ONLY surface — keep the token-pure component (design/showcase/src/components/Paywall.tsx, still exported from components/index.ts for PRD-02/03) but remove it from the showcase reference page (it does not belong on the website).
+- Checks run (cd design/showcase): npm run typecheck → clean; npm run lint → No issues found; npm run build → ok (CSS 22.35kB). Tokens typecheck (cd design) → ok.
+- Browser evidence (Playwright + system Chrome): showcase = 11 section[id]s, hasPaywall:false, no Paywall nav link, no horizontal overflow at 1280px or 390px. Paywall component (verified in isolation via a throwaway #paywall-check route, since removed): selected-plan price computed fontSize 24px, priceRight inside cardRight at 320/360/390px (clip-free, ~17px margin). Screenshot: scratchpad/paywall-fixed-360.png.
+- Learnings for future iterations:
+  - The Paywall is app monetization (subscription/credits) — it lives in the design system for the app, not the marketing website. Don't surface it in web/landing contexts.
+  - When a price/numeral sits beside a label in a fixed-width card, step it down the type scale at narrow breakpoints rather than letting the display size clip — stays token-pure and prominent.
+  - DESIGN.md (repo) is the adapted Wishmax source of truth; the original Partiful reference differs only by the documented proprietary-font substitution. Cross-reference against DESIGN.md, not the raw Partiful doc.
+---

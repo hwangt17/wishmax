@@ -16,7 +16,6 @@ import {
   Chip,
   ChipGroup,
   FeedPhotoTile,
-  Paywall,
   Sheet,
 } from './components'
 
@@ -163,7 +162,6 @@ const TOC = [
     { id: 'controls', label: 'Core controls' },
     { id: 'feed', label: 'Feed & before/after' },
     { id: 'cards', label: 'Cards & surfaces' },
-    { id: 'paywall', label: 'Paywall' },
   ] },
 ]
 
@@ -731,69 +729,6 @@ function CardSurfaces() {
   )
 }
 
-const PAYWALL_PLANS = [
-  { id: 'annual', name: 'Annual', price: '$39.99', period: '/yr', caption: '$3.33/mo · billed yearly', badge: 'Best value' },
-  { id: 'monthly', name: 'Monthly', price: '$9.99', period: '/mo', caption: 'Billed monthly · cancel anytime' },
-  { id: 'weekly', name: 'Weekly', price: '$4.99', period: '/wk', caption: 'Dip your toe in' },
-]
-
-function PaywallSurface() {
-  const [plan, setPlan] = useState('annual')
-  const [open, setOpen] = useState(false)
-
-  return (
-    <Section id="paywall" title="Paywall surface">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: v('--spacing-40') }}>
-        {/* Inline surface, sitting on a gradient-wash SECTION background (never on
-            the CTA — the spec allows the wash behind the surface only). */}
-        <div>
-          <SubLabel>Paywall — selectable plans, display price, restore link, black CTA</SubLabel>
-          <div
-            style={{
-              backgroundImage: v('--gradient-sky-periwinkle'),
-              borderRadius: v('--radius-modals'),
-              padding: v('--spacing-40'),
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
-            <div style={{ width: `calc(${v('--spacing-160')} * 3)`, maxWidth: '100%' }}>
-              <Paywall
-                inline
-                plans={PAYWALL_PLANS}
-                selectedId={plan}
-                onSelectPlan={setPlan}
-                subtitle="Put your face into every template style. Cancel anytime."
-                ctaLabel="Start free trial"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Interactive overlay mode — real scrim + dismiss. */}
-        <div>
-          <SubLabel>Overlay mode — open the real paywall (scrim · Escape · close)</SubLabel>
-          <Row>
-            <Cell label={`open paywall — selected: ${plan}`}>
-              <Button onClick={() => setOpen(true)}>Go Premium</Button>
-            </Cell>
-          </Row>
-          <Paywall
-            open={open}
-            onClose={() => setOpen(false)}
-            plans={PAYWALL_PLANS}
-            selectedId={plan}
-            onSelectPlan={setPlan}
-            subtitle="Put your face into every template style. Cancel anytime."
-            ctaLabel="Start free trial"
-            onContinue={() => setOpen(false)}
-          />
-        </div>
-      </div>
-    </Section>
-  )
-}
-
 export function App() {
   return (
     <main
@@ -1021,8 +956,6 @@ export function App() {
       <FeedComponents />
 
       <CardSurfaces />
-
-      <PaywallSurface />
     </main>
   )
 }

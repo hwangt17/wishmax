@@ -681,9 +681,14 @@
     flex-wrap: wrap;
   }
 
+  /* Flush-left and one step down the type scale so the price never crowds the
+     card edge on phones — still the most prominent element in the plan card. */
   .wm-plan__price {
     width: 100%;
-    padding-left: calc(var(--spacing-20) + var(--spacing-12));
+    padding-left: 0;
+    font-size: var(--text-heading);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
   }
 }
 
