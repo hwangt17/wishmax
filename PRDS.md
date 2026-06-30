@@ -2,7 +2,9 @@
 
 | PRD | Status | Branch | Source | Notes |
 |---|---|---|---|---|
-| Initial Scaffold | Planned | `ralph/initial-scaffold` | `tasks/prd-initial-scaffold.md` | Placeholder. Replace with first real product PRD before coding. |
+| PRD-01 Design System | Planned | `ralph/design-system` | `tasks/prd-design-system.md` | Foundation. `DESIGN.md` (repo root) is the visual source of truth (Partiful-derived, light/playful). PRD materializes it into web + RN tokens, fonts, core components, and enforces it in the agent loop. Build first. |
+| PRD-02 Landing Page | Planned | `ralph/landing-page` | `tasks/prd-landing-page.md` | Marketing site. Next.js + TS + Tailwind, conversion-focused. Depends on PRD-01. |
+| PRD-03 App MVP | Planned | `ralph/app-mvp` | `tasks/prd-app-mvp.md` | Expo React Native (iOS + Android) + backend proxy (auth, paywall, GPT-Image 2 / Nano Banana Pro). Depends on PRD-01. |
 
 ## Status Legend
 

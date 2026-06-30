@@ -1,26 +1,182 @@
 {
-  "title": "Wishmax Initial Scaffold",
-  "branchName": "ralph/initial-scaffold",
+  "title": "Wishmax Design System — Adopt, Materialize & Enforce",
+  "branchName": "ralph/design-system",
   "status": "planned",
-  "sourcePrd": "tasks/prd-initial-scaffold.md",
+  "sourcePrd": "tasks/prd-design-system.md",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Replace placeholder PRD with the first real Wishmax build scope",
-      "priority": "p1",
-      "description": "Create the first real product PRD before implementation starts.",
+      "title": "Materialize design tokens (web + RN sources)",
+      "description": "As a developer, I want DESIGN.md's tokens as importable files in design/ so the showcase and downstream app PRDs reference tokens instead of literals.",
       "acceptanceCriteria": [
-        "A markdown PRD exists in tasks/ with goals, non-goals, user stories, acceptance criteria, edge cases, and QA requirements.",
-        "prd.json is updated to match the PRD.",
-        "progress.txt includes any carried-forward product or codebase learnings.",
-        "PRDS.md lists the new PRD."
+        "design/tokens.css exists as a Tailwind v4 @theme block with every color, gradient, type-scale, weight, spacing, radius, shadow, layout, and surface token from DESIGN.md.",
+        "design/theme.ts mirrors the same values, adapting CSS-only constructs for RN (gradient stops for expo-linear-gradient, shadows as shadow/elevation props, full-pill 960px radius as a large finite number).",
+        "design/README.md states DESIGN.md is the source of truth, documents how to keep the two token files in sync, and lists intentional RN adaptations.",
+        "Token values match DESIGN.md for every platform-portable value (spot-check colors, type scale, radii, spacing).",
+        "theme.ts typechecks standalone via a minimal tsconfig in design/.",
+        "Typecheck passes"
       ],
       "verification": [
-        "Review tasks/ PRD for completeness.",
-        "Validate prd.json with jq.",
-        "Confirm every story has passes:false before the build starts."
+        "Run tsc against design/tsconfig (theme.ts) — no errors.",
+        "Diff token values in tokens.css and theme.ts against the DESIGN.md token tables."
       ],
-      "passes": false
+      "priority": "p1",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Scaffold the design-system showcase harness",
+      "description": "As a developer, I want a minimal design-system-owned web harness wired to the tokens so components have a runtime to build and verify in (not the PRD-02 marketing app or PRD-03 Expo app).",
+      "acceptanceCriteria": [
+        "A minimal web app or Storybook lives under design/ (e.g. design/showcase) — explicitly not a product app.",
+        "Tailwind v4 is configured to consume design/tokens.css; a token swatch/sample page renders entirely from tokens (no hardcoded values).",
+        "A dev command serves the harness and a build command succeeds; lint passes.",
+        "Dev/build commands documented in design/README.md and the AGENTS.md Unknown Stack section.",
+        "Typecheck passes",
+        "Verify in browser using the agent-browser skill"
+      ],
+      "verification": [
+        "Start the dev server, load the page, confirm swatches reflect the token values.",
+        "Run the build, typecheck, and lint commands."
+      ],
+      "priority": "p1",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Install brand fonts (web loaded; RN assets + config delivered)",
+      "description": "As a developer, I want the brand fonts available so type renders as designed — applied on web now, with RN assets and registration config ready for PRD-03 to bundle.",
+      "acceptanceCriteria": [
+        "Cabinet Grotesk (display) and Inter (text) self-hosted (or license-compliant source) and applied via the font tokens in the showcase harness.",
+        "Font files committed under design/fonts/ with an expo-font registration snippet/config documented for PRD-03 to bundle (RN runtime registration verified later in PRD-03).",
+        "Web and RN fallback stacks defined so missing glyphs degrade gracefully.",
+        "A sample heading renders in Cabinet Grotesk and body text in Inter in the browser.",
+        "Typecheck passes",
+        "Verify in browser using the agent-browser skill"
+      ],
+      "verification": [
+        "Load the harness; confirm the heading and body render in the correct faces; capture a screenshot.",
+        "Confirm design/fonts/ contains the font files plus a documented expo-font config."
+      ],
+      "priority": "p2",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Core control components from tokens",
+      "description": "As a developer, I want buttons, chips, and badges built from tokens so every screen reuses them.",
+      "acceptanceCriteria": [
+        "Primary filled button (black/white), ghost button, filter chip, and pill badge implemented per DESIGN.md specs in the showcase harness.",
+        "All states present: default/hover/pressed/disabled, plus loading for the primary button.",
+        "Semantic status variants (Done/Processing/Failed) wired to the status tokens on the badge.",
+        "Components reference tokens only — no literal hex/px/font values in component code.",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using the agent-browser skill"
+      ],
+      "verification": [
+        "Grep component source for literal hex/px/font values — none found.",
+        "Load the harness and exercise each component state."
+      ],
+      "priority": "p2",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Feed photo tile & before/after card",
+      "description": "As a developer, I want the hero photography components since they anchor both the app feed and the marketing gallery.",
+      "acceptanceCriteria": [
+        "Feed photo tile: ~3:4 portrait, 12px radius, full-bleed image, optional category chip + lock/Premium badge over a legibility scrim, shimmer loading state.",
+        "Before/after card built from two tiles (or a slider) with Before/After pill labels.",
+        "Both built from tokens; pressed/selected states defined.",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using the agent-browser skill"
+      ],
+      "verification": [
+        "Load the harness; confirm aspect ratio, radius, scrim, shimmer, and Before/After labels."
+      ],
+      "priority": "p3",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Content card & modal/sheet surfaces",
+      "description": "As a developer, I want card and overlay surfaces so cards and modals are on-brand.",
+      "acceptanceCriteria": [
+        "Standard content card (white, 12px radius, --shadow-sm, max two type sizes) implemented.",
+        "Modal/sheet surface (16px radius, --shadow-lg) implemented — derived from the --radius-modals token and the paywall surface spec.",
+        "Built from tokens; no literal visual values.",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using the agent-browser skill"
+      ],
+      "verification": [
+        "Load the harness; confirm card radius/shadow, the two-type-size limit, and the modal radius/shadow."
+      ],
+      "priority": "p3",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Paywall surface",
+      "description": "As a developer, I want an on-brand paywall surface so the subscription/credits flow matches the system.",
+      "acceptanceCriteria": [
+        "Paywall surface per spec: selectable plan cards (selected = black border / black fill accent), price prominent in display type, 'Restore purchases' link present, black primary CTA.",
+        "Gradient wash allowed as the section background only — never on the button or other interactive elements.",
+        "Built from tokens; no literal visual values.",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using the agent-browser skill"
+      ],
+      "verification": [
+        "Load the harness; confirm plan-selection state, price prominence, restore link, black CTA, and that no gradient appears on the button."
+      ],
+      "priority": "p3",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Reference showcase page (assemble & verify the whole system)",
+      "description": "As a reviewer, I want one page rendering the whole system so I can verify the intended look and catch drift.",
+      "acceptanceCriteria": [
+        "The showcase harness renders the full system: palette, gradients, type scale, spacing scale, and every component variant/state from US-004 through US-007.",
+        "Everything consumes the exported tokens from design/ (proving the pipeline), not hardcoded copies.",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using the agent-browser skill; capture a screenshot in progress.txt"
+      ],
+      "verification": [
+        "Load the showcase; confirm every section is present and token-driven; save a screenshot to progress.txt."
+      ],
+      "priority": "p4",
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Enforce the system in agent instructions",
+      "description": "As the team, I want the design rule baked into the Ralph loop so the agent follows DESIGN.md every iteration.",
+      "acceptanceCriteria": [
+        "CLAUDE.md and AGENTS.md instruct every iteration to read DESIGN.md and forbid hardcoded visual values (tokens only).",
+        "progress.txt ## Codebase Patterns records: 'DESIGN.md is the visual source of truth; consume tokens, never hardcode color/type/spacing/radius.'",
+        "A reviewer checklist item exists in checklist.md to reject PRs that hardcode visual values or diverge from DESIGN.md.",
+        "Typecheck passes"
+      ],
+      "verification": [
+        "Grep CLAUDE.md and AGENTS.md for the read-DESIGN.md / tokens-only rule.",
+        "Confirm the progress.txt pattern line and the checklist.md reviewer item exist."
+      ],
+      "priority": "p4",
+      "passes": false,
+      "notes": ""
     }
   ]
 }
