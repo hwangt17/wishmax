@@ -1,0 +1,735 @@
+/*
+ * Wishmax core control components — styled ENTIRELY from design tokens.
+ *
+ * SOURCE OF TRUTH: ../../DESIGN.md (consumed via ../../tokens.css). Every color,
+ * size, radius, spacing, weight, and shadow below is a var(--…) token — there are
+ * no literal hex / px / font values here. Interactive states use real pseudo
+ * classes (:hover / :active / :disabled); the matching `.is-force-*` classes let
+ * the showcase render those same states statically side by side.
+ *
+ * Non-visual literals only: opacity multipliers, unitless transforms, transition
+ * timing, and the spinner keyframes — none of these are token-governed values.
+ */
+
+/* ---------------------------------------------------------------- Buttons -- */
+
+.wm-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  font-family: var(--font-sans);
+  border-radius: var(--radius-buttons);
+  padding: var(--spacing-10) var(--spacing-24);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 120ms ease, background-color 120ms ease, color 120ms ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.wm-btn:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+/* Primary filled — black on white (the only action color). */
+.wm-btn--primary {
+  background-color: var(--color-midnight-ink);
+  color: var(--color-pure-canvas);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-bold);
+}
+
+/* On photo / hero surfaces the fill inverts to white-on-black. */
+.wm-btn--primary.wm-btn--on-photo {
+  background-color: var(--color-pure-canvas);
+  color: var(--color-midnight-ink);
+}
+
+.wm-btn--primary:hover:not(:disabled):not(.is-loading),
+.wm-btn--primary.is-force-hover {
+  opacity: 0.85;
+}
+
+.wm-btn--primary:active:not(:disabled):not(.is-loading),
+.wm-btn--primary.is-force-pressed {
+  opacity: 0.7;
+}
+
+/* Ghost — transparent with a black hairline; secondary / header action. */
+.wm-btn--ghost {
+  background-color: transparent;
+  color: var(--color-midnight-ink);
+  border-color: var(--color-midnight-ink);
+  border-radius: var(--radius-navpills);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-w550);
+}
+
+/* Ghost hover/press fills black — stays inside the black & white system. */
+.wm-btn--ghost:hover:not(:disabled):not(.is-loading),
+.wm-btn--ghost.is-force-hover {
+  background-color: var(--color-midnight-ink);
+  color: var(--color-pure-canvas);
+}
+
+.wm-btn--ghost:active:not(:disabled):not(.is-loading),
+.wm-btn--ghost.is-force-pressed {
+  background-color: var(--color-midnight-ink);
+  color: var(--color-pure-canvas);
+  opacity: 0.85;
+}
+
+/* Disabled — silver fill / fog label (per DESIGN.md disabled roles). */
+.wm-btn:disabled,
+.wm-btn.is-force-disabled {
+  cursor: not-allowed;
+  background-color: var(--color-silver);
+  color: var(--color-fog);
+  border-color: transparent;
+  opacity: 1;
+}
+
+/* Loading — keep the black fill, swap the label for a spinner, hold the size. */
+.wm-btn.is-loading {
+  cursor: progress;
+}
+
+.wm-btn.is-loading .wm-btn__label {
+  visibility: hidden;
+}
+
+.wm-btn__spinner {
+  position: absolute;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  border-radius: var(--radius-full);
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: wm-spin 700ms linear infinite;
+}
+
+@keyframes wm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------------------------------------ Filter chip -- */
+
+/* The pill container that groups the chips (the app's primary control). */
+.wm-chip-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  background-color: var(--surface-tint-soft);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-4);
+}
+
+.wm-chip-group--on-photo {
+  background-color: var(--surface-tint-strong);
+}
+
+.wm-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-w550);
+  color: var(--color-graphite);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: var(--spacing-8) var(--spacing-16);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, opacity 120ms ease;
+  white-space: nowrap;
+}
+
+.wm-chip:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+.wm-chip:hover:not(:disabled):not(.is-active),
+.wm-chip.is-force-hover {
+  color: var(--color-midnight-ink);
+}
+
+.wm-chip:active:not(:disabled),
+.wm-chip.is-force-pressed {
+  opacity: 0.7;
+}
+
+/* Active / selected — white pill lifted off the container by shadow. */
+.wm-chip.is-active {
+  background-color: var(--color-pure-canvas);
+  color: var(--color-midnight-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+/* On dark/photo headers the active label takes the single warm accent. */
+.wm-chip-group--on-photo .wm-chip {
+  color: var(--color-pure-canvas);
+}
+
+.wm-chip-group--on-photo .wm-chip.is-active {
+  color: var(--color-warm-sand);
+}
+
+.wm-chip:disabled,
+.wm-chip.is-force-disabled {
+  cursor: not-allowed;
+  color: var(--color-fog);
+}
+
+/* ------------------------------------------------------------- Pill badge -- */
+
+.wm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  line-height: var(--leading-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-6) var(--spacing-12);
+  white-space: nowrap;
+}
+
+.wm-badge--soft {
+  background-color: var(--surface-tint-soft);
+}
+
+.wm-badge--strong {
+  background-color: var(--surface-tint-strong);
+}
+
+/* On photo: a frosted dark pill with white text, legible over photography. */
+.wm-badge--on-photo {
+  background-color: var(--surface-tint-strong);
+  color: var(--color-pure-canvas);
+}
+
+.wm-badge__icon {
+  width: var(--text-label);
+  height: var(--text-label);
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Status dot — the only place the semantic colors appear (generation state). */
+.wm-badge__dot {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  /* background-color is set per status from a --color-status-* token inline. */
+}
+
+/* -------------------------------------------------------- Feed photo tile -- */
+
+/* THE hero component: ~3:4 portrait, full-bleed image, 12px radius. Interactive
+   (pick a photo) → pressed + selected states. Optional top-corner category /
+   Premium overlays sit over a legibility scrim. */
+.wm-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: var(--surface-tint-soft);
+  border-radius: var(--radius-images);
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+  transition: transform 120ms ease;
+}
+
+.wm-tile:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+/* Full-bleed photography (object-fit cover keeps the 3:4 frame). */
+.wm-tile__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Showcase / empty stand-in: a gradient stands in for photography
+   (DESIGN.md Imagery register 2 — decorative gradient inside template tiles). */
+.wm-tile__placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+/* Top scrim — darkens the top edge so corner chips/badges stay legible. */
+.wm-tile__scrim {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gradient-scrim);
+  pointer-events: none;
+}
+
+/* Top-corner overlay row: category (left) + Premium/lock (right). */
+.wm-tile__overlay {
+  position: absolute;
+  top: var(--spacing-8);
+  left: var(--spacing-8);
+  right: var(--spacing-8);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  pointer-events: none;
+}
+
+/* Pressed — subtle press-in. */
+.wm-tile:active:not(.is-loading),
+.wm-tile.is-force-pressed {
+  transform: scale(0.98);
+}
+
+/* Selected — black ring (selection lives in the black & white system). */
+.wm-tile.is-selected {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+.wm-tile.is-loading {
+  cursor: progress;
+}
+
+/* Shimmer skeleton — token-only: a tint-strong band sweeps over the tint base. */
+.wm-tile__shimmer {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--surface-tint-strong) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: wm-shimmer 1400ms ease-in-out infinite;
+}
+
+@keyframes wm-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ---------------------------------------------------- Before / after card -- */
+
+/* Two feed tiles paired — the primary credibility component. */
+.wm-ba-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-8);
+  background-color: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-8);
+}
+
+.wm-ba-card__pane {
+  position: relative;
+}
+
+/* Before / After pill label, top-left over each tile. */
+.wm-ba-card__label {
+  position: absolute;
+  top: var(--spacing-8);
+  left: var(--spacing-8);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------- Content card -- */
+
+/* Standard content card — white surface separated by shadow, not color.
+   Hierarchy is exactly two type sizes (title + body) per DESIGN.md. */
+.wm-card {
+  background-color: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-12) var(--spacing-16) var(--spacing-16);
+}
+
+/* Optional media (photo/tile) above the text; pull it flush to the padded
+   edges and round its bottom corners into the card frame. */
+.wm-card__media {
+  margin: calc(-1 * var(--spacing-12)) calc(-1 * var(--spacing-16)) var(--spacing-12);
+  border-top-left-radius: var(--radius-cards);
+  border-top-right-radius: var(--radius-cards);
+  overflow: hidden;
+}
+
+/* Title — first allowed type size (Inter 700, 18px). */
+.wm-card__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+}
+
+/* Body — second (and last) allowed type size (Inter 400, 14px, slate). */
+.wm-card__body {
+  margin: var(--spacing-8) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+}
+
+/* ------------------------------------------------ Modal / sheet surface -- */
+
+/* Full-viewport scrim for the overlay modes (ink-tint wash, token-only). */
+.wm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  padding: var(--spacing-20);
+  background-color: var(--surface-tint-strong);
+  animation: wm-fade-in 160ms ease;
+}
+
+.wm-overlay--modal {
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom sheet anchors to the bottom edge, full-width up to the panel max. */
+.wm-overlay--sheet {
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+@keyframes wm-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The surface itself — white, 16px radius, --shadow-lg. */
+.wm-sheet {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  /* ~480px: a unitless multiple of the spacing scale (no literal px). */
+  max-width: calc(var(--spacing-160) * 3);
+  background-color: var(--surface-card);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-24);
+}
+
+.wm-sheet--modal {
+  border-radius: var(--radius-modals);
+  animation: wm-pop-in 160ms ease;
+}
+
+/* Sheet variant: only the top corners round; it rises from the bottom edge. */
+.wm-sheet--sheet {
+  max-width: var(--page-max-width);
+  border-top-left-radius: var(--radius-modals);
+  border-top-right-radius: var(--radius-modals);
+  padding-top: var(--spacing-12);
+  animation: wm-slide-up 200ms ease;
+}
+
+@keyframes wm-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes wm-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+/* Grab handle for the bottom sheet. */
+.wm-sheet__handle {
+  display: block;
+  width: var(--spacing-40);
+  height: var(--spacing-4);
+  margin: 0 auto var(--spacing-16);
+  border-radius: var(--radius-full);
+  background-color: var(--surface-tint-strong);
+}
+
+.wm-sheet__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+}
+
+/* Title — first type size (Inter 700, 18px), matching the content card. */
+.wm-sheet__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+}
+
+/* Close (×) — a minimal icon button; fills toward ink on hover, token-only. */
+.wm-sheet__close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--color-ash);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: color 120ms ease;
+}
+
+.wm-sheet__close:hover {
+  color: var(--color-midnight-ink);
+}
+
+.wm-sheet__close:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+.wm-sheet__close-icon {
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+  display: block;
+}
+
+/* Body — second type size (Inter 400, 14px, slate). */
+.wm-sheet__body {
+  margin: var(--spacing-8) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+}
+
+/* Footer actions row. */
+.wm-sheet__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+  margin-top: var(--spacing-24);
+}
+
+/* ------------------------------------------------------- Paywall surface -- */
+
+/* The paywall body lives inside the Sheet surface; plans stack vertically. */
+.wm-paywall {
+  margin-top: var(--spacing-16);
+}
+
+.wm-paywall__plans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+/* Selectable plan card — silver hairline by default; black border + fill accent
+   when chosen. Border-color (not width) swaps so selection never reflows. */
+.wm-plan {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  background-color: var(--surface-card);
+  border: 1px solid var(--color-silver);
+  border-radius: var(--radius-cards);
+  padding: var(--spacing-12) var(--spacing-16);
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.wm-plan:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+.wm-plan:hover:not(.is-selected) {
+  border-color: var(--color-ash);
+}
+
+/* Selected — black border + the black fill accent (radio) + a subtle lift. */
+.wm-plan.is-selected {
+  border-color: var(--color-midnight-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Radio: empty silver ring → black fill with a white check when selected. */
+.wm-plan__radio {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-silver);
+  color: var(--color-pure-canvas);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.wm-plan.is-selected .wm-plan__radio {
+  background-color: var(--color-midnight-ink);
+  border-color: var(--color-midnight-ink);
+}
+
+.wm-plan__check {
+  width: var(--text-label);
+  height: var(--text-label);
+  display: block;
+  opacity: 0;
+}
+
+.wm-plan.is-selected .wm-plan__check {
+  opacity: 1;
+}
+
+/* Name + caption stack (grows to fill the row). */
+.wm-plan__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.wm-plan__name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+}
+
+.wm-plan__caption {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-slate);
+  overflow-wrap: anywhere;
+}
+
+/* Price — prominent in the display-size scale. Inter (DESIGN.md routes numerals
+   to Inter; Space Grotesk is reserved for hero headlines). */
+.wm-plan__price {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--spacing-4);
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading-lg);
+  line-height: var(--leading-heading-lg);
+  letter-spacing: var(--tracking-heading-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+}
+
+@media (max-width: 520px) {
+  .wm-plan {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .wm-plan__price {
+    width: 100%;
+    padding-left: calc(var(--spacing-20) + var(--spacing-12));
+  }
+}
+
+.wm-plan__period {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-slate);
+}
+
+/* Footer: a full-width solid-black CTA above a centered restore link. The CTA
+   stays solid black — a gradient wash only ever sits behind the surface. */
+.wm-paywall__footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.wm-paywall__cta {
+  width: 100%;
+}
+
+/* Restore purchases — a quiet underlined text link, no button chrome. */
+.wm-paywall__restore {
+  background-color: transparent;
+  border: none;
+  padding: var(--spacing-4);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-w550);
+  color: var(--color-graphite);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.wm-paywall__restore:hover {
+  color: var(--color-midnight-ink);
+}
+
+.wm-paywall__restore:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}

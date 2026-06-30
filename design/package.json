@@ -1,0 +1,14 @@
+{
+  "name": "@wishmax/design",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Wishmax design tokens (web tokens.css + RN theme.ts), mirrored from DESIGN.md.",
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./theme": "./theme.ts"
+  },
+  "scripts": {
+    "typecheck": "npx -y -p typescript@latest tsc -p tsconfig.json"
+  }
+}

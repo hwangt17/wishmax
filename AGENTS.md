@@ -10,12 +10,15 @@ Before coding:
 2. Read `CLAUDE.md`.
 3. Read `prd.json`.
 4. Read `progress.txt`, especially `## Codebase Patterns`.
-5. Check `git status --short --branch`.
+5. Read `DESIGN.md` before any UI work (visual source of truth).
+6. Check `git status --short --branch`.
 
 ## Operating Rules
 
 - Work from `prd.json`; do not freewheel outside the active PRD.
 - Implement exactly one `passes: false` user story per Ralph iteration.
+- **Every iteration, read `DESIGN.md` before any UI work.** It is the visual source of truth: consume design tokens (`design/tokens.css` on web, `design/theme.ts` on app), never hardcode color/type/spacing/radius/shadow values. Add missing values to `DESIGN.md` + token files first. This applies on every Ralph loop, not just the first.
+- **Reviewer gate:** reject any PR/change that hardcodes a visual value instead of a token, or that diverges from `DESIGN.md`. Token-only is a merge requirement (see `checklist.md`).
 - Keep changes focused and minimal.
 - Update `progress.txt` after meaningful work.
 - Add durable repo patterns to the top `## Codebase Patterns` section.
@@ -46,6 +49,7 @@ Before calling work done:
 - Build passes, if a build command exists.
 - Typecheck/lint/test pass where available.
 - UI changes have browser evidence.
+- UI code is token-only — no hardcoded color/type/spacing/radius/shadow values; matches `DESIGN.md`.
 - Every user story has implementation evidence.
 - Critical audit findings are fixed.
 - `progress.txt`, `checklist.md`, and `PRDS.md` are updated.
@@ -60,3 +64,33 @@ This repo started empty. As the stack becomes real, update this file with:
 - Test command.
 - Environment variable requirements.
 - Deployment target.
+
+### Stack — design system (PRD-01)
+
+The first real surface is the design-system **showcase harness** at
+`design/showcase/` (Vite + React + TypeScript + Tailwind v4). It is the runtime
+for building/verifying design-system components and consumes `design/tokens.css`
+directly — it is **not** a product app.
+
+| Concern | Command (run from `design/showcase/`) |
+|---|---|
+| Install | `npm install` |
+| Dev server | `npm run dev` → http://localhost:5181 |
+| Build | `npm run build` (`tsc -b && vite build`) |
+| Typecheck | `npm run typecheck` (`tsc -b --noEmit`) |
+| Lint | `npm run lint` (`eslint`) |
+| Test | none yet |
+| Env vars | none |
+| Deploy | n/a (internal harness, not shipped) |
+
+Brand fonts are self-hosted under `design/fonts/` (Space Grotesk display +
+Inter text). Web loads them via `design/fonts.css` (`@font-face`, imported after
+`tokens.css` in the showcase); the dev server allows the parent `design/` dir
+(`server.fs.allow: ['..']`). RN bundling is delivered as `design/fonts/expo-font.config.ts`
+for PRD-03. Never hardcode font families — use the `--font-display` / `--font-sans`
+tokens (web) or `theme.font.*` (RN).
+
+The token sources themselves (`design/theme.ts`) typecheck standalone via
+`cd design && npx -y -p typescript@latest tsc -p tsconfig.json`.
+
+Node v25 / npm 11; no global `tsc` (use the local devDependency or `npx`).

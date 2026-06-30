@@ -9,6 +9,7 @@ You are an autonomous coding agent working in the Wishmax repo.
 1. Read `prd.json`.
 2. Read `progress.txt`, starting with `## Codebase Patterns`.
 3. Read `AGENTS.md`.
+3a. Read `DESIGN.md` (the visual source of truth) before any UI work.
 4. Check that you are on `prd.json.branchName`. If not, check it out or create it from the default branch.
 5. Pick the highest-priority user story where `passes: false`.
 6. Implement that single user story.
@@ -67,6 +68,14 @@ If you discover durable patterns, add them to the top section:
 ```
 
 Add only reusable patterns. Keep story-specific notes in the dated entry.
+
+## Design Requirements
+
+- **Every iteration, read `DESIGN.md` (repo root) before any UI work.** It is the single source of truth for all visual design — this rule is non-negotiable and applies on every Ralph loop, not just the first.
+- Consume design **tokens** (CSS vars / Tailwind `@theme` on web → `design/tokens.css`; `theme.ts` on app → `design/theme.ts`). **Never hardcode** color, type, spacing, radius, or shadow values in components or pages.
+- If a needed value is missing, add it to `DESIGN.md` first, then to the token files (`design/tokens.css` + `design/theme.ts`) — do not invent ad-hoc values in components.
+- Follow the `DESIGN.md` Do's/Don'ts (e.g. black/white action system, gradients on surfaces only — never on buttons/interactive elements, max two type sizes per card).
+- **Reject any change** (your own or under review) that hardcodes a visual value instead of a token, or that diverges from `DESIGN.md`. Token-only is a merge gate.
 
 ## Quality Requirements
 
