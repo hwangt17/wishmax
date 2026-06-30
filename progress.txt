@@ -1,21 +1,16 @@
 # Ralph Progress Log
 
 Started: 2026-06-30
+Active PRD: PRD-01 Design System (tasks/prd-design-system.md) — branch ralph/design-system
+Previous run archived to archive/2026-06-30-initial-scaffold/
 
 ## Codebase Patterns
 
-- This repo starts as a Ralph-loop scaffold. Add stack-specific build, test, env, and deploy patterns here as soon as the app foundation exists.
-- Use `prd.json` as execution state and `progress.txt` as persistent agent memory.
+- DESIGN.md is the visual source of truth: consume design tokens (design/tokens.css for web, design/theme.ts for RN), never hardcode color/type/spacing/radius/shadow. Add missing values to DESIGN.md + token files first.
+- This PRD is the design system only: it ships portable artifacts under design/ (tokens, fonts, component implementations) plus a self-contained showcase harness. It does NOT scaffold the product apps — PRD-02 scaffolds the Next.js site and PRD-03 scaffolds the Expo app, each wiring these artifacts in.
+- RN runtime verification (Expo font bundling, on-device rendering) is deferred to PRD-03; PRD-01 only delivers the RN theme.ts + font files + registration config.
+- Use prd.json as execution state and progress.txt as persistent agent memory.
 - Implement exactly one incomplete user story per Ralph loop invocation.
+- Add stack-specific build/test/dev/env/deploy commands here as soon as the showcase harness exists (US-002).
 
----
-
-## 2026-06-30 14:20 - Repo setup
-
-- Implemented: Initial Ralph-loop workflow scaffold for Wishmax.
-- Files changed: `AGENTS.md`, `CLAUDE.md`, `ralph.sh`, `prompt.md`, `prd.json`, `PRDS.md`, `checklist.md`, `tasks/templates/*`, `skills/*/SKILL.md`.
-- Checks run: `bash -n ralph.sh`, `jq empty prd.json`.
-- Learnings for future iterations:
-  - Wishmax GitHub repo was empty at setup time.
-  - First real implementation PRD should replace the placeholder `prd.json`.
 ---

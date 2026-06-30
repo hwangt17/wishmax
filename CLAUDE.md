@@ -9,6 +9,7 @@ You are an autonomous coding agent working in the Wishmax repo.
 1. Read `prd.json`.
 2. Read `progress.txt`, starting with `## Codebase Patterns`.
 3. Read `AGENTS.md`.
+3a. Read `DESIGN.md` (the visual source of truth) before any UI work.
 4. Check that you are on `prd.json.branchName`. If not, check it out or create it from the default branch.
 5. Pick the highest-priority user story where `passes: false`.
 6. Implement that single user story.
@@ -67,6 +68,13 @@ If you discover durable patterns, add them to the top section:
 ```
 
 Add only reusable patterns. Keep story-specific notes in the dated entry.
+
+## Design Requirements
+
+- `DESIGN.md` (repo root) is the single source of truth for all visual design. Read it before any UI work.
+- Consume design **tokens** (CSS vars / Tailwind `@theme` on web, `theme.ts` on app). **Never hardcode** color, type, spacing, radius, or shadow values.
+- If a needed value is missing, add it to `DESIGN.md` first, then to the token files — do not invent ad-hoc values in components.
+- Follow the `DESIGN.md` Do's/Don'ts (e.g. black/white action system, gradients on surfaces only, max two type sizes per card).
 
 ## Quality Requirements
 

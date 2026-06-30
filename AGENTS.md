@@ -10,12 +10,14 @@ Before coding:
 2. Read `CLAUDE.md`.
 3. Read `prd.json`.
 4. Read `progress.txt`, especially `## Codebase Patterns`.
-5. Check `git status --short --branch`.
+5. Read `DESIGN.md` before any UI work (visual source of truth).
+6. Check `git status --short --branch`.
 
 ## Operating Rules
 
 - Work from `prd.json`; do not freewheel outside the active PRD.
 - Implement exactly one `passes: false` user story per Ralph iteration.
+- `DESIGN.md` is the visual source of truth: consume design tokens, never hardcode color/type/spacing/radius/shadow values. Add missing values to `DESIGN.md` + token files first.
 - Keep changes focused and minimal.
 - Update `progress.txt` after meaningful work.
 - Add durable repo patterns to the top `## Codebase Patterns` section.
