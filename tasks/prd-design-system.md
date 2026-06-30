@@ -2,14 +2,14 @@
 
 ## Introduction
 
-Wishmax's visual language is already defined in [`DESIGN.md`](../DESIGN.md) at the repo root — a light, white-canvas, photo-forward system adapted nearly 1:1 from Partiful (black/white action system, pink/periwinkle gradient surfaces, Cabinet Grotesk display + Inter text). **This PRD does not invent a design system.** `DESIGN.md` is the source of truth.
+Wishmax's visual language is already defined in [`DESIGN.md`](../DESIGN.md) at the repo root — a light, white-canvas, photo-forward system adapted nearly 1:1 from Partiful (black/white action system, pink/periwinkle gradient surfaces, Space Grotesk display + Inter text). **This PRD does not invent a design system.** `DESIGN.md` is the source of truth.
 
 This PRD's job is to make `DESIGN.md` *real and enforceable*: turn its token tables into importable artifacts both platforms consume (web CSS/Tailwind + React Native `theme.ts`), install the fonts, build the handful of core components against those tokens, ship a reference showcase, and wire the "tokens only, never hardcode" rule into the files the Ralph agent reads every loop. Without this, `DESIGN.md` is just prose the agent will drift away from.
 
 ## Goals
 
 - Materialize `DESIGN.md` tokens into a single source that exports to both web (Tailwind/CSS vars) and app (`theme.ts`), with zero divergence.
-- Make the Wishmax fonts (Cabinet Grotesk display, Inter text) available to both platforms — loaded/applied on web now, RN assets + registration config delivered for PRD-03 to bundle.
+- Make the Wishmax fonts (Space Grotesk display, Inter text) available to both platforms — loaded/applied on web now, RN assets + registration config delivered for PRD-03 to bundle.
 - Build the core components (button, ghost button, chip, badge, content card, feed photo tile, before/after card, paywall surface) strictly from tokens.
 - Ship a reference showcase that renders the system so QA can catch drift visually.
 - Enforce the system: make `DESIGN.md` and the "no hardcoded visual values" rule part of every Ralph iteration's required reading.
@@ -47,7 +47,7 @@ This PRD's job is to make `DESIGN.md` *real and enforceable*: turn its token tab
 **Description:** As a developer, I want the brand fonts available so type renders as designed — loaded and verified in the design-system showcase now, with the RN assets and registration config ready for the Expo app (PRD-03) to bundle.
 
 **Acceptance Criteria:**
-- [ ] Cabinet Grotesk (display) and Inter (text) self-hosted (or license-compliant source) and applied via the font tokens in the showcase; a sample heading + body render in the correct faces in the browser (evidence captured).
+- [ ] Space Grotesk (display) and Inter (text) self-hosted (or license-compliant source) and applied via the font tokens in the showcase; a sample heading + body render in the correct faces in the browser (evidence captured).
 - [ ] The same font files are committed under `design/fonts/` with an RN registration snippet/config (e.g. `expo-font` usage) documented for PRD-03 to bundle. RN runtime registration is verified when the Expo app scaffolds in PRD-03 (its US-001), not here.
 - [ ] Fallback stacks defined (web `--font-*` stacks and RN equivalents) so missing glyphs degrade gracefully.
 
@@ -121,7 +121,7 @@ This PRD's job is to make `DESIGN.md` *real and enforceable*: turn its token tab
 - FR-1: `DESIGN.md` is the single source of truth; this PRD materializes and enforces it, not redefines it.
 - FR-2: Tokens must exist as importable files for both web (Tailwind/CSS vars) and app (`theme.ts`), matching `DESIGN.md` for every platform-portable value; RN adapts CSS-only constructs (gradients, shadows, full-pill radius) without renaming tokens.
 - FR-3: Components must reference tokens only — no literal visual values in component code.
-- FR-4: Cabinet Grotesk (display) and Inter (text) must be applied on web now and delivered as RN font assets + registration config for PRD-03 to bundle.
+- FR-4: Space Grotesk (display) and Inter (text) must be applied on web now and delivered as RN font assets + registration config for PRD-03 to bundle.
 - FR-5: A reference showcase must render the system from the exported tokens.
 - FR-6: The "read DESIGN.md / tokens-only" rule must be present in `CLAUDE.md`, `AGENTS.md`, and the `progress.txt` patterns section.
 
@@ -145,13 +145,13 @@ This PRD's job is to make `DESIGN.md` *real and enforceable*: turn its token tab
 
 - Web: Tailwind v4 `@theme` (the block is provided verbatim in `DESIGN.md`).
 - App: a typed `theme.ts` `as const` for autocomplete + type safety (shape provided in `DESIGN.md`).
-- Fonts: verify Cabinet Grotesk + Inter licensing for self-hosting (web) and bundling (RN) before locking.
+- Fonts: verify Space Grotesk + Inter licensing for self-hosting (web) and bundling (RN) before locking.
 - If the two token files start drifting by hand, consider a small generator later (e.g. Style Dictionary) — not required now.
 - Showcase: a minimal design-system-owned harness (Storybook or a small app under `design/`) with its own Tailwind pointed at `design/tokens.css`. It is lightweight and independent of the PRD-02/03 app scaffolds, so PRD-01 is verifiable on its own.
 
 ## Edge Cases
 
-- **Font licensing blocked:** if Cabinet Grotesk can't be self-hosted/bundled legally, fall back to the nearest open grotesk (see Open Questions) *without renaming the font tokens*, so consumers are unaffected.
+- **Font licensing blocked:** if Space Grotesk can't be self-hosted/bundled legally, fall back to the nearest open grotesk (see Open Questions) *without renaming the font tokens*, so consumers are unaffected.
 - **Web font FOUT/FOIT:** use `font-display: swap` and the fallback stacks so first paint isn't blocked and layout doesn't shift.
 - **RN can't represent CSS constructs 1:1:** `theme.ts` exposes gradient color stops for `expo-linear-gradient`, maps `--shadow-*` to RN shadow/elevation props, and caps the `960px` full-pill radius to a large finite value.
 - **Non-standard weights/axes:** verify the Inter variable axis actually renders the `550` and `825` weights used in `DESIGN.md`; if a target can't, snap to the nearest supported weight and note it.
@@ -175,6 +175,6 @@ This PRD's job is to make `DESIGN.md` *real and enforceable*: turn its token tab
 
 ## Open Questions
 
-- Cabinet Grotesk licensing for self-host + RN bundle — confirm, or pick the nearest free alternative (e.g. another grotesk) if blocked.
+- Space Grotesk licensing for self-host + RN bundle — confirm, or pick the nearest free alternative (e.g. another grotesk) if blocked.
 - Do we add a token generator (Style Dictionary) now, or keep two hand-maintained files until drift becomes a problem?
 - Logo/wordmark for Wishmax — in scope here, or a separate brand-identity task?

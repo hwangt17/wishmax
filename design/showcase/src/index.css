@@ -1,0 +1,22 @@
+/*
+ * Showcase entry stylesheet.
+ *
+ * Tailwind v4 is wired to consume the design-system tokens: importing
+ * ../../tokens.css pulls the DESIGN.md @theme block into Tailwind's theme,
+ * so every token is available both as a CSS custom property (var(--…))
+ * and as generated utilities. No visual values are defined here — they all
+ * come from the tokens file (the single source of truth is ../../DESIGN.md).
+ */
+@import "tailwindcss";
+@import "../../fonts.css";
+@import "../../tokens.css";
+@import "./components.css";
+
+html,
+body {
+  margin: 0;
+  background: var(--surface-canvas);
+  color: var(--color-midnight-ink);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-body);
+}
