@@ -71,10 +71,11 @@ Add only reusable patterns. Keep story-specific notes in the dated entry.
 
 ## Design Requirements
 
-- `DESIGN.md` (repo root) is the single source of truth for all visual design. Read it before any UI work.
-- Consume design **tokens** (CSS vars / Tailwind `@theme` on web, `theme.ts` on app). **Never hardcode** color, type, spacing, radius, or shadow values.
-- If a needed value is missing, add it to `DESIGN.md` first, then to the token files — do not invent ad-hoc values in components.
-- Follow the `DESIGN.md` Do's/Don'ts (e.g. black/white action system, gradients on surfaces only, max two type sizes per card).
+- **Every iteration, read `DESIGN.md` (repo root) before any UI work.** It is the single source of truth for all visual design — this rule is non-negotiable and applies on every Ralph loop, not just the first.
+- Consume design **tokens** (CSS vars / Tailwind `@theme` on web → `design/tokens.css`; `theme.ts` on app → `design/theme.ts`). **Never hardcode** color, type, spacing, radius, or shadow values in components or pages.
+- If a needed value is missing, add it to `DESIGN.md` first, then to the token files (`design/tokens.css` + `design/theme.ts`) — do not invent ad-hoc values in components.
+- Follow the `DESIGN.md` Do's/Don'ts (e.g. black/white action system, gradients on surfaces only — never on buttons/interactive elements, max two type sizes per card).
+- **Reject any change** (your own or under review) that hardcodes a visual value instead of a token, or that diverges from `DESIGN.md`. Token-only is a merge gate.
 
 ## Quality Requirements
 

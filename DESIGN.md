@@ -32,7 +32,7 @@ Partiful's "Partiful Display Medium" and "TWK Lausanne Pan" are proprietary. Wis
 
 | Role | Wishmax font | Replaces | Usage |
 |------|--------------|----------|-------|
-| Display | **Cabinet Grotesk** (Medium 500) | Partiful Display Medium | Hero headlines & largest section titles **only**, ≥ 26px. Slightly rounded geometric, celebratory but not childish. |
+| Display | **Space Grotesk** (Medium 500) | Partiful Display Medium | Hero headlines & largest section titles **only**, ≥ 26px. Slightly rounded geometric, celebratory but not childish. |
 | Text / UI | **Inter** (variable, 400–825) | TWK Lausanne Pan | Everything else: nav, body, labels, buttons, captions, oversized display numerals. One family, full weight axis. |
 
 > The dozen `TWK Lausanne Pan 400/500/550/...` entries in the original extraction are collapsed into the **Inter** variable axis (400 prose · 550–650 UI emphasis · 700 headings · 825 oversized numerals). Letter-spacing: **-0.02em** at regular weights (400–600), **-0.04em** at heavy weights (650–825), **-0.03em** at the 112px display numeral.
@@ -73,7 +73,16 @@ Partiful's "Partiful Display Medium" and "TWK Lausanne Pan" are proprietary. Wis
 | heading-lg | 36px | 1.2 | -1.44px | `--text-heading-lg` |
 | display | 48px | 1.0 | -0.96px | `--text-display` |
 
-Weights: `400` regular · `500` medium · `550` w550 · `600` semibold · `700` bold · `825` w825 (oversized numerals only). Display face (Cabinet Grotesk) used **only** at display/heading-lg for hero statements; all other headings use Inter 700.
+Weights: `400` regular · `500` medium · `550` w550 · `600` semibold · `700` bold · `825` w825 (oversized numerals only). Display face (Space Grotesk) used **only** at display/heading-lg for hero statements; all other headings use Inter 700.
+
+### Component text tokens
+
+Two component specs (badge, ghost button) call for sizes outside the core scale. They are tokens too — components must reference them, never the literals:
+
+| Role | Size | Line Height | Token | Used by |
+|------|------|-------------|-------|---------|
+| label | 12px | 1.2 | `--text-label` / `--leading-label` | pill badges, category/status tags |
+| ui-lg | 16px | 1.4 | `--text-ui-lg` / `--leading-ui-lg` | ghost / secondary buttons |
 
 ---
 
@@ -88,6 +97,10 @@ Weights: `400` regular · `500` medium · `550` w550 · `600` semibold · `700` 
 **Layout:** page max-width `1200px` · section gap `80px` · element gap `10px`.
 
 **Surfaces:** `0` Canvas `#ffffff` · `1` Card `#ffffff` (separated by shadow, not color) · `2` Gradient Wash (periwinkle/pink, the only non-white surface) · `3` Overlay Ink `#000000` (dark gradient over hero photography for legible white text).
+
+**Ink tints** (chip containers & badge fills — a transparent black wash over the canvas, not a new hue): `--surface-tint-soft: rgba(0,0,0,0.05)` · `--surface-tint-strong: rgba(0,0,0,0.2)`.
+
+**Photo scrim** (the concrete form of the Overlay Ink surface — a dark→transparent gradient behind top-corner chips/badges so they stay legible over full-bleed photography): `--gradient-scrim: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 38%)`. Used only on the Feed Photo Tile, never as a brand wash.
 
 ---
 
@@ -123,7 +136,7 @@ White modal surface, radius 16px, `--shadow-lg`. Plan options as selectable card
 Tasteful progress (not a raw spinner) over a `#ffffff` or gradient-wash surface; on completion the result reveals via the Before/After card. Status pill reflects Processing → Done/Failed using semantic colors.
 
 ### Hero Section (landing) — full-bleed photo + gradient overlay
-Full-width, ~420px tall. Full-bleed editorial/result photography with Party Pink overlay (~0.4 opacity) fading left→right. Headline Cabinet Grotesk 48px white; subtext Inter 400 18px white; white ghost CTA. 2px backdrop blur behind text for legibility. **No shadow on this section.**
+Full-width, ~420px tall. Full-bleed editorial/result photography with Party Pink overlay (~0.4 opacity) fading left→right. Headline Space Grotesk 48px white; subtext Inter 400 18px white; white ghost CTA. 2px backdrop blur behind text for legibility. **No shadow on this section.**
 
 ### Announcement Banner — top promo strip
 Full width ~32px, Party Pink gradient bg, text `#000000` Inter 550 14px centered, flanked by emoji. The only place saturated pink appears in chrome rather than imagery.
@@ -141,13 +154,13 @@ White, radius 16px, `--shadow-lg`, ~240px. App icon 32px (radius 8px), headline 
 - 960px radius for all pills/badges/filter chips — never a small radius on these.
 - Wrap feature sections in periwinkle→white gradient washes, alternating with pure-white sections for rhythm.
 - Scatter template tiles at ±10–15° rotation in showcase sections — the tilted stack communicates variety and "pick your vibe."
-- Reserve Cabinet Grotesk for hero/large display only; Inter 700 for all other headings.
+- Reserve Space Grotesk for hero/large display only; Inter 700 for all other headings.
 - Use `#31c431 / #ffae00 / #ff0000` **only** for generation status (Done/Processing/Failed).
 
 **Don't**
 - Never use a colored accent (purple/blue/pink) as a button fill — action hierarchy is black & white only.
 - No box-shadow on hero/full-bleed sections — elevation is for cards & floating widgets only.
-- No Cabinet Grotesk below 26px — use Inter 700.
+- No Space Grotesk below 26px — use Inter 700.
 - Never use Warm Sand `#d9c58b` for anything but the active nav/filter state.
 - Don't center body paragraphs in feature sections — keep them left-aligned.
 - Max 2 type sizes per card.
@@ -193,9 +206,11 @@ One source → both platforms. Keep these in sync with the tables above:
   --gradient-party-pink: linear-gradient(rgb(248,196,255) 0%, rgb(240,182,224) 100%);
   --gradient-sky-periwinkle: linear-gradient(rgba(150,196,255,0.1) 0%, #ffffff 100%);
   --gradient-spearmint: linear-gradient(130deg, rgb(133,218,220) 0%, rgb(192,226,226) 100%);
+  /* Photo scrim — Feed Photo Tile legibility overlay (Overlay Ink, concrete form) */
+  --gradient-scrim: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 38%);
 
   /* Fonts */
-  --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   /* Type scale */
@@ -205,6 +220,9 @@ One source → both platforms. Keep these in sync with the tables above:
   --text-heading: 24px;     --leading-heading: 1.2;     --tracking-heading: -0.96px;
   --text-heading-lg: 36px;  --leading-heading-lg: 1.2;  --tracking-heading-lg: -1.44px;
   --text-display: 48px;     --leading-display: 1.0;     --tracking-display: -0.96px;
+  /* Component text (badge / ghost button) — outside the core scale */
+  --text-label: 12px;       --leading-label: 1.2;
+  --text-ui-lg: 16px;       --leading-ui-lg: 1.4;
 
   /* Weights */
   --font-weight-regular: 400; --font-weight-medium: 500; --font-weight-w550: 550;
@@ -231,6 +249,7 @@ One source → both platforms. Keep these in sync with the tables above:
   /* Surfaces */
   --surface-canvas: #ffffff; --surface-card: #ffffff;
   --surface-gradient-wash: #96c4ff; --surface-overlay-ink: #000000;
+  --surface-tint-soft: rgba(0, 0, 0, 0.05); --surface-tint-strong: rgba(0, 0, 0, 0.2);
 }
 ```
 
@@ -245,7 +264,7 @@ export const theme = {
     spearmint: '#85dadc', midnightBlue: '#001666',
     statusDone: '#31c431', statusProcessing: '#ffae00', statusFailed: '#ff0000',
   },
-  font: { display: 'CabinetGrotesk-Medium', sans: 'Inter' },
+  font: { display: 'SpaceGrotesk', sans: 'Inter' },
   text: {
     caption: { size: 11, lineHeight: 13, tracking: -0.22 },
     body: { size: 14, lineHeight: 20, tracking: -0.28 },
@@ -253,6 +272,8 @@ export const theme = {
     heading: { size: 24, lineHeight: 29, tracking: -0.96 },
     headingLg: { size: 36, lineHeight: 43, tracking: -1.44 },
     display: { size: 48, lineHeight: 48, tracking: -0.96 },
+    label: { size: 12, lineHeight: 14, tracking: -0.24 },
+    uiLg: { size: 16, lineHeight: 22, tracking: -0.32 },
   },
   weight: { regular: '400', medium: '500', w550: '550', semibold: '600', bold: '700', w825: '825' },
   spacing: { 4:4, 6:6, 8:8, 10:10, 12:12, 16:16, 20:20, 24:24, 30:30, 40:40, 60:60, 80:80, 100:100, 120:120, 160:160 },
@@ -263,6 +284,8 @@ export const theme = {
     partyPink:     { colors: ['#f8c4ff', '#f0b6e0'], locations: [0, 1], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
     skyPeriwinkle: { colors: ['rgba(150,196,255,0.1)', '#ffffff'], locations: [0, 1], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
     spearmint:     { colors: ['#85dadc', '#c0e2e2'], locations: [0, 1], start: { x: 0, y: 0 }, end: { x: 1, y: 1 } }, // ~130deg
+    // Photo scrim — Feed Photo Tile legibility overlay (top-down dark fade).
+    scrim:         { colors: ['rgba(0,0,0,0.45)', 'rgba(0,0,0,0)'], locations: [0, 0.38], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
   },
   // Shadows: RN shadow props (iOS) + elevation (Android). Mirrors --shadow-sm / --shadow-lg.
   shadow: {
@@ -271,6 +294,9 @@ export const theme = {
   },
   layout: { pageMaxWidth: 1200, sectionGap: 80, elementGap: 10 },
   // Surfaces: 0 canvas · 1 card (separated by shadow, not color) · 2 gradient wash · 3 overlay ink.
-  surface: { canvas: '#ffffff', card: '#ffffff', gradientWash: '#96c4ff', overlayInk: '#000000' },
+  surface: {
+    canvas: '#ffffff', card: '#ffffff', gradientWash: '#96c4ff', overlayInk: '#000000',
+    tintSoft: 'rgba(0,0,0,0.05)', tintStrong: 'rgba(0,0,0,0.2)',
+  },
 } as const
 ```

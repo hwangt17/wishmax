@@ -1,7 +1,7 @@
 {
   "title": "Wishmax Design System — Adopt, Materialize & Enforce",
   "branchName": "ralph/design-system",
-  "status": "planned",
+  "status": "qa",
   "sourcePrd": "tasks/prd-design-system.md",
   "userStories": [
     {
@@ -21,8 +21,8 @@
         "Diff token values in tokens.css and theme.ts against the DESIGN.md token tables."
       ],
       "priority": "p1",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Materialized design/tokens.css (Tailwind v4 @theme), design/theme.ts (RN mirror, typed `as const`), design/README.md (sync rules + RN adaptations), design/tsconfig.json + package.json. theme.ts typechecks clean via tsc -p design/tsconfig.json."
     },
     {
       "id": "US-002",
@@ -41,18 +41,18 @@
         "Run the build, typecheck, and lint commands."
       ],
       "priority": "p1",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Scaffolded design/showcase/ (Vite 6 + React 19 + TS + Tailwind v4 via @tailwindcss/vite). src/index.css imports tailwindcss then ../../tokens.css, so the DESIGN.md @theme is consumed as both var(--…) and utilities. src/App.tsx renders palette/status/gradients/type scale/spacing/radius/shadows entirely from tokens (no literals). dev (port 5181), build (tsc -b && vite build), typecheck, lint all pass. Tokens verified present in built CSS. Browser-verified via Playwright/Chrome screenshot — all sections render correctly (display headlines fall back to system sans until fonts land in US-003). Commands documented in design/README.md + AGENTS.md Unknown Stack."
     },
     {
       "id": "US-003",
       "title": "Install brand fonts (web loaded; RN assets + config delivered)",
       "description": "As a developer, I want the brand fonts available so type renders as designed — applied on web now, with RN assets and registration config ready for PRD-03 to bundle.",
       "acceptanceCriteria": [
-        "Cabinet Grotesk (display) and Inter (text) self-hosted (or license-compliant source) and applied via the font tokens in the showcase harness.",
+        "Space Grotesk (display) and Inter (text) self-hosted (or license-compliant source) and applied via the font tokens in the showcase harness.",
         "Font files committed under design/fonts/ with an expo-font registration snippet/config documented for PRD-03 to bundle (RN runtime registration verified later in PRD-03).",
         "Web and RN fallback stacks defined so missing glyphs degrade gracefully.",
-        "A sample heading renders in Cabinet Grotesk and body text in Inter in the browser.",
+        "A sample heading renders in Space Grotesk and body text in Inter in the browser.",
         "Typecheck passes",
         "Verify in browser using the agent-browser skill"
       ],
@@ -61,8 +61,8 @@
         "Confirm design/fonts/ contains the font files plus a documented expo-font config."
       ],
       "priority": "p2",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Self-hosted Space Grotesk (Google Fonts/SIL OFL) + Inter v4.1 (rsms/inter, OFL) under design/fonts/ (inter/ + space-grotesk/ + licenses). Web: design/fonts.css declares one variable @font-face per family (full 100-900 axis, font-display swap), imported after tokens.css in showcase src/index.css; vite.config.ts adds server.fs.allow:['..'] so the dev server serves design/fonts/. RN: design/fonts/expo-font.config.ts exports brandFontsVariable (preferred) + brandFontsStatic (portable) keyed to theme.font.* names, with variable TTFs + static Inter weight TTFs and the Space Grotesk variable TTF bundled for PRD-03. Fallback stacks live in --font-display/--font-sans (web) and system font (RN). Added a Fonts specimen section to App.tsx. typecheck+lint+build pass; Inter woff2 and Space Grotesk TTF emitted to dist. Browser-verified via Playwright/Chrome: document.fonts shows Inter + Space Grotesk 'loaded', check() true for both; H1/display render in Space Grotesk, body in Inter. Docs: design/README.md Brand fonts section + AGENTS.md Unknown Stack."
     },
     {
       "id": "US-004",
@@ -82,8 +82,8 @@
         "Load the harness and exercise each component state."
       ],
       "priority": "p2",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Built Button (primary + ghost), Chip/ChipGroup, and Badge under design/showcase/src/components/, styled 100% from tokens via src/components.css (real :hover/:active/:disabled pseudo-states + .is-force-* classes so the showcase renders states statically). Primary: black/white fill, on-photo white invert, hover(0.85)/pressed(0.7)/disabled(silver/fog)/loading(spinner, holds size). Ghost: black hairline → fills black on hover/pressed → silver/fog disabled. Filter chip: tint-soft pill container, active = white pill + --shadow-sm, on-photo active label = Warm Sand. Badge: soft/strong ink-tint pills + semantic status dot (Done/Processing/Failed) read from --color-status-* tokens. Added 4 missing tokens to DESIGN.md + tokens.css + theme.ts first: --text-label(12px)/--text-ui-lg(16px) + leadings, --surface-tint-soft/-strong (rgba ink washes). Grep: no hex/font/font-size literals in component code (only 1px/2px border & focus-outline widths, matching the existing US-002 pattern). typecheck+lint+build pass; new tokens + component classes present in built CSS. Browser-verified via Playwright/Chrome: computed styles resolve to the right tokens (primary #000/#fff r8, disabled #ccc, ghost 16px, active-chip white+shadow-sm, on-photo active #d9c58b, badge 12px tint-soft, status dots #31c431/#ffae00/#ff0000) — screenshot archive/2026-06-30-initial-scaffold/showcase-us004-core-controls-section.png."
     },
     {
       "id": "US-005",
@@ -101,8 +101,8 @@
         "Load the harness; confirm aspect ratio, radius, scrim, shimmer, and Before/After labels."
       ],
       "priority": "p3",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Built FeedPhotoTile (the hero component) + BeforeAfterCard under design/showcase/src/components/, styled 100% from tokens in src/components.css. Tile: <button>, aspect-ratio 3/4, --radius-images(12px), overflow-hidden full-bleed image (src → <img object-fit:cover>; showcase passes a gradient token via `placeholder` as a photography stand-in per DESIGN.md Imagery register 2). Optional top-left category + top-right Premium/lock badge ride over a --gradient-scrim legibility overlay; both overlays use a new Badge `onPhoto` variant (white text on --surface-tint-strong frosted pill). States: pressed (:active/forceState scale 0.98), selected (black 2px outline ring), loading (token-only shimmer skeleton — a --surface-tint-strong band sweeps over the --surface-tint-soft base via @keyframes). BeforeAfterCard: two FeedPhotoTiles paired in a white card (--surface-card, --radius-cards, --shadow-sm), each with a Before/After onPhoto pill label; selected rings both. Added ONE token first (DESIGN.md → tokens.css → theme.ts): --gradient-scrim (linear-gradient 180deg rgba(0,0,0,.45)→0 at 38%), the concrete form of the Overlay Ink surface. typecheck+lint+build pass; literal grep over components clean (only 1px/2px outline/border widths). Browser-verified via Playwright/Chrome: computed styles resolve to tokens — tile radius 12px, aspect 3/4, overflow hidden; scrim = rgba(0,0,0,.45) gradient; selected outline #000 2px; onPhoto badge white/rgba(0,0,0,.2)/r960/12px; shimmer animation active; BA card 2 cols + r12 + shadow-sm + white; Before/After labels present. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us005-feed-tiles-section.png + showcase-us005-full.png."
     },
     {
       "id": "US-006",
@@ -120,8 +120,8 @@
         "Load the harness; confirm card radius/shadow, the two-type-size limit, and the modal radius/shadow."
       ],
       "priority": "p3",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Built Card (content card) + Sheet (modal/sheet surface) under design/showcase/src/components/, styled 100% from tokens in src/components.css. Card: white --surface-card, --radius-cards(12px), --shadow-sm, padding 12/16/16; exactly two type sizes — title --text-heading-sm(18px) bold ink + body --text-body(14px) regular slate; optional `media` slot bleeds a FeedPhotoTile flush to the padded top edge. Sheet: one white surface (--surface-card, --shadow-lg) in two variants — modal (--radius-modals 16px, centered) and sheet (16px top corners only + grab handle, bottom-anchored). Two modes: `inline` renders just the panel for the static showcase; overlay mode renders a fixed --surface-tint-strong scrim + role=dialog panel dismissed by scrim-click / Escape / close (×) button. No new tokens needed (radius-modals, shadow-lg, surface-card/tint-strong all existed). Modal max-width = calc(--spacing-160 * 3) ≈480px (unitless multiplier, like US-005's BA width). typecheck+lint+build pass; literal grep over Card/Sheet/components.css clean. Browser-verified via Playwright/Chrome: card radius 12px / shadow-sm / white / title 18px / body 14px rgb(102,102,102); modal radius 16px / shadow-lg / white; sheet top-radius 16px bottom 0 / shadow-lg; overlay scrim rgba(0,0,0,.2)=tint-strong, Escape + scrim-click both dismiss. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us006-cards-surfaces-section.png + showcase-us006-modal-overlay.png + showcase-us006-sheet-overlay.png."
     },
     {
       "id": "US-007",
@@ -139,8 +139,8 @@
         "Load the harness; confirm plan-selection state, price prominence, restore link, black CTA, and that no gradient appears on the button."
       ],
       "priority": "p3",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Built Paywall under design/showcase/src/components/Paywall.tsx, composed ON TOP of the US-006 Sheet (reuses its overlay/scrim/16px-radius/--shadow-lg surface, Escape/close dismiss) — added the selection body + footer only. Plan cards (<button role=radio>): silver hairline by default; selected = black border-color swap (no reflow) + --shadow-sm lift + black fill accent (radio fills --color-midnight-ink with a white check). Price prominent in the DISPLAY-size scale: --text-heading-lg (36px) in Inter — DESIGN.md routes numerals to Inter ('oversized display numerals') and reserves Space Grotesk for hero headlines, so the price stays Inter (token-pure, no Space-Grotesk-below-hero misuse). 'Restore purchases' = a quiet underlined text link; single solid-black primary CTA (full width). Gradient wash demonstrated as the SECTION background behind the inline surface (--gradient-sky-periwinkle on the wrapper) — verified NOT on the CTA (computed backgroundImage:none). One enabling change: Sheet body <p>→<div> so it can legally hold the rich plan markup (renders identically for existing text bodies). No new tokens needed. typecheck+lint+build pass; literal grep over Paywall.tsx + components.css clean; paywall/plan classes present in built CSS. Browser-verified via Playwright/Chrome: selected plan borderColor rgb(0,0,0)/radius 12px/shadow-sm, radio bg rgb(0,0,0) + check opacity 1, price 36px Inter; unselected border rgb(204,204,204)/empty radio/check opacity 0; CTA bg rgb(0,0,0) bgImage none color white; section wash gradient present; click moves selection (Annual→Monthly); overlay scrim rgba(0,0,0,0.2), dialog visible, Escape dismisses. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us007-paywall-section.png + showcase-us007-paywall-overlay.png."
     },
     {
       "id": "US-008",
@@ -157,8 +157,8 @@
         "Load the showcase; confirm every section is present and token-driven; save a screenshot to progress.txt."
       ],
       "priority": "p4",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Assembled the full system into one navigable reference page in design/showcase/src/App.tsx. Added a token-only in-page Nav (table of contents, grouped Foundations / Components, 12 anchor links → section ids, bg --surface-tint-soft) and a GroupHeading divider component (Space Grotesk display eyebrow+title). Restructured the page into Foundations (Fonts, Palette, Status colors, Gradients, Type scale, Spacing, Radius, Shadows) then Components (Core controls US-004, Feed & before/after US-005, Cards & surfaces US-006, Paywall US-007) — every US-004→US-007 variant/state already rendered; this story is the assembly + final verification pass. All sections carry scroll-target ids. No new tokens; no component changes; everything still consumes design/tokens.css (proving the pipeline). typecheck+lint+build pass (dist CSS 22.05kB). Browser-verified via Playwright/Chrome: all 12 nav anchors resolve (0 missing), both group headings present, 12 section[id]s present, nav bg rgba(0,0,0,0.05), h1 Space Grotesk, primary button rgb(0,0,0); anchor nav scrolls to #paywall. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us008-full-reference.png (full page) + showcase-us008-components-anchor.png."
     },
     {
       "id": "US-009",
@@ -175,8 +175,8 @@
         "Confirm the progress.txt pattern line and the checklist.md reviewer item exist."
       ],
       "priority": "p4",
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Baked the design rule into the Ralph loop. CLAUDE.md Design Requirements: explicit 'Every iteration, read DESIGN.md before any UI work' (non-negotiable, applies every loop not just the first), tokens-only forbids hardcoded color/type/spacing/radius/shadow with the concrete token paths (design/tokens.css web / design/theme.ts RN), and a 'Reject any change… token-only is a merge gate' line. AGENTS.md Operating Rules: same every-iteration read-DESIGN.md + tokens-only rule plus a Reviewer gate line; QA Gate now lists 'UI code is token-only — matches DESIGN.md'. progress.txt ## Codebase Patterns line records verbatim: 'DESIGN.md is the visual source of truth; consume tokens, never hardcode color/type/spacing/radius.' checklist.md adds a US-009 section with a Standing reviewer gate (reject PRs that hardcode a visual value OR diverge from DESIGN.md, confirm DESIGN.md was read, token-only grep) + story-acceptance items. Verified via grep across all four files; typecheck green (tokens tsc + showcase tsc -b --noEmit). Docs-only story — no UI, no browser evidence. This completes PRD-01."
     }
   ]
 }

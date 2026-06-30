@@ -6,11 +6,219 @@ Previous run archived to archive/2026-06-30-initial-scaffold/
 
 ## Codebase Patterns
 
-- DESIGN.md is the visual source of truth: consume design tokens (design/tokens.css for web, design/theme.ts for RN), never hardcode color/type/spacing/radius/shadow. Add missing values to DESIGN.md + token files first.
+- DESIGN.md is the visual source of truth; consume tokens, never hardcode color/type/spacing/radius. (Web: design/tokens.css; RN: design/theme.ts; also covers shadow.) Add missing values to DESIGN.md + token files first. This rule is enforced in CLAUDE.md + AGENTS.md (read DESIGN.md every iteration) and in the checklist.md reviewer gate — reject any change that hardcodes a visual value or diverges from DESIGN.md.
 - This PRD is the design system only: it ships portable artifacts under design/ (tokens, fonts, component implementations) plus a self-contained showcase harness. It does NOT scaffold the product apps — PRD-02 scaffolds the Next.js site and PRD-03 scaffolds the Expo app, each wiring these artifacts in.
 - RN runtime verification (Expo font bundling, on-device rendering) is deferred to PRD-03; PRD-01 only delivers the RN theme.ts + font files + registration config.
 - Use prd.json as execution state and progress.txt as persistent agent memory.
 - Implement exactly one incomplete user story per Ralph loop invocation.
 - Add stack-specific build/test/dev/env/deploy commands here as soon as the showcase harness exists (US-002).
+- Design tokens now live in design/: design/tokens.css (web @theme) and design/theme.ts (RN). Keep both in sync with DESIGN.md; web uses var(--token), RN uses theme.* (camelCase mirror of kebab-case CSS names).
+- design/theme.ts typechecks standalone: `cd design && npx -y -p typescript@latest tsc -p tsconfig.json` (no global tsc; node v25/npm 11 available).
+- Showcase harness lives at design/showcase/ (Vite + React + TS + Tailwind v4). It is the design-system runtime — NOT a product app. Build components here. Tailwind consumes tokens by importing ../../tokens.css after "tailwindcss" in src/index.css; tokens are then both var(--…) and utilities. Commands (from design/showcase/): `npm run dev` (port 5181), `npm run build`, `npm run typecheck`, `npm run lint`.
+- Browser verification without a project-local browser: Playwright is usable via a temp install (`cd /tmp && npm i playwright@1.58`) driving system Chrome (`chromium.launch({ channel: 'chrome' })`); screenshot the dev server URL. To verify font loading, evaluate `document.fonts.ready` then `document.fonts.check('14px Inter')` / `[...document.fonts].map(f=>f.status)` ('loaded' vs 'error').
+- Brand fonts are self-hosted under design/fonts/ (inter/, space-grotesk/, licenses, expo-font.config.ts). Web consumes them via design/fonts.css (@font-face), imported after tokens.css in showcase src/index.css. The @font-face families ("Inter", "Space Grotesk") are what the --font-* tokens reference — never hardcode a font family. RN bundling for these is delivered as design/fonts/expo-font.config.ts (consumed in PRD-03).
+- Vite gotcha: design/fonts.css and design/fonts/ live ABOVE the showcase project root, so the dev server 403s their url()s by default. design/showcase/vite.config.ts sets `server.fs.allow: ['..']` (relative to root → allows design/). Avoid `node:url`/`import.meta.url` in vite.config.ts — it's typechecked under tsconfig.node.json which has no @types/node; use a root-relative path string instead.
+- Components live at design/showcase/src/components/ (Button, Chip/ChipGroup, Badge), styled by design/showcase/src/components.css (imported last in src/index.css, after tokens.css). PATTERN: inline styles can't do :hover/:active/:disabled, so component visual state lives in a token-only CSS file using real pseudo-classes; pair each pseudo rule with an `.is-force-*` class (and a `forceState` prop) so the showcase can render hover/pressed/disabled statically side by side. Components reference tokens ONLY — verify with `grep -rnE '#[0-9a-fA-F]{3,8}|font-family.*(inter|space|sans-serif)|font-size:.*px' src/components.css src/components/` → only allowed literals are 1px/2px border & focus-outline widths (border-WIDTH isn't a tokenized value; DESIGN.md tokens cover color/type/spacing/radius/shadow). Opacity multipliers, transforms, transition timing, and @keyframes are also non-token literals and fine.
+- When a component spec needs a value the core tokens lack, add the token to DESIGN.md FIRST (table + @theme block + theme.ts shape), then design/tokens.css + design/theme.ts, then consume it. US-004 added --text-label(12px)/--text-ui-lg(16px) (+leadings) and --surface-tint-soft/-strong (rgba(0,0,0,.05/.2) ink washes for chip containers & badge fills). DESIGN.md has an internal conflict (button spec says -0.04em but the Do's say -0.02em for 14–18px) — resolved by using the per-role --tracking-* tokens, not a new tracking token.
+- Status/semantic colors (--color-status-done/processing/failed) appear ONLY on the Badge's status dot and ONLY for generation state — never decorative. The dot color is applied inline as `var(--color-status-*)` (a token ref, not a literal), selected via a status→token map in Badge.tsx.
+- Imagery/photo components (FeedPhotoTile, BeforeAfterCard) take a real `src` (rendered full-bleed via `<img object-fit:cover>`); the showcase has no licensed photos, so it passes a gradient token name via a `placeholder` prop instead — a div with `backgroundImage: var(<token>)`. This is sanctioned by DESIGN.md Imagery (register 2: decorative gradients inside template/preview tiles), NOT the "no gradients on interactive components" rule (which forbids gradient *button fills as brand accents*). Pass a `--gradient-*` token name, never a literal.
+- Overlays on photography use the Badge `onPhoto` variant (white text on a --surface-tint-strong frosted pill) so labels read over the image; pair them with the --gradient-scrim overlay (top-down dark fade, the concrete form of the Overlay Ink surface) behind top-corner chips/badges. Both were added in US-005. Reuse onPhoto Badge + scrim for any chip/label sitting on a photo.
+- Token-only loading shimmer pattern: base element = --surface-tint-soft; an absolutely-positioned ::before/child band `linear-gradient(90deg, transparent, var(--surface-tint-strong), transparent)` with `transform: translateX(-100%→100%)` via @keyframes. No color literals — the sweep is built from tint tokens (like the US-004 spinner, the keyframes/transform are non-token animation literals and fine).
+- Selection state in the black & white system = a 2px `var(--color-midnight-ink)` outline ring (outline, not border, to avoid reflow). Pressed = `transform: scale(0.98)` on :active + an `.is-force-pressed` showcase class. Same forceState pattern as US-004.
+- Surfaces with overlay behavior (Sheet/modal) expose an `inline` prop: `inline` renders only the panel (for the static showcase grid), while overlay mode renders a fixed `--surface-tint-strong` scrim + `role="dialog"` panel dismissed by scrim-click / Escape / close button. Reuse this dual-mode pattern for the US-007 paywall (it IS a Sheet/modal surface — build it on top of Sheet). Modal backdrop scrim = `--surface-tint-strong` (rgba(0,0,0,0.2)); never the solid `--surface-overlay-ink`.
+- A component prop named `title` collides with React's built-in HTML `title` attribute (typed `string`) when the interface extends `HTMLAttributes`. If `title` must accept `ReactNode`, `Omit<HTMLAttributes<…>, 'title'>` on the interface. Same applies to other DOM-reserved names.
+- "Max two type sizes per card" (DESIGN.md) is enforced structurally: Card + Sheet bodies use exactly `--text-heading-sm` (title) + `--text-body` (body). Footer Buttons carry their own control-text tokens and don't count toward the card's content type hierarchy.
+- The Sheet body renders in a `<div class="wm-sheet__body">` (not `<p>`) so surfaces built on Sheet (e.g. the US-007 Paywall) can pass rich block content — divs/buttons — legally. Text bodies render identically. Build overlay surfaces (paywall, dialogs, future sheets) ON TOP of Sheet; pass the rich content as `children` and the footer as `actions`.
+- "Display type" for prominent numerals (e.g. the paywall price) = the display-size SCALE (`--text-heading-lg` / `--text-display`) in **Inter**, NOT Space Grotesk. DESIGN.md's font table routes "oversized display numerals" to Inter and reserves Space Grotesk for hero headlines/largest section titles only. So a prominent price uses `--text-heading-lg` + `--font-sans` + bold — never the display family. Don't read "display type" as "the display typeface".
+- Selectable cards (paywall plans) show selection without reflow by swapping `border-color` (silver hairline → `--color-midnight-ink`) on a fixed 1px border, plus a "black fill accent": a radio that fills `--color-midnight-ink` with a white check (`opacity 0→1`). This is the card-level analog of the US-005 outline-ring selection; use border-color swap when the spec literally calls for a "black border", outline-ring when it must not affect the box.
+- The reference showcase page (design/showcase/src/App.tsx) is the single page that assembles the whole system: a token-only `Nav` (in-page table of contents, grouped Foundations / Components) over `GroupHeading` dividers, then Foundations sections (Fonts, Palette, Status colors, Gradients, Type scale, Spacing, Radius, Shadows) then Components sections (Core controls, Feed & before/after, Cards & surfaces, Paywall). Each `Section` takes an `id` for anchor navigation. When you add a new component/section, give its `<Section>` an `id`, add the matching `{ id, label }` entry to the `TOC` array, and keep it under the correct group — that single page is what US-008 verifies and what reviewers use to catch drift.
 
+---
+
+## [2026-06-30 08:12] - US-001
+- Implemented: Materialized DESIGN.md's token tables into importable files under design/.
+- Files changed:
+  - design/tokens.css — Tailwind v4 @theme block with every DESIGN.md token (colors, gradients, fonts, type scale + leading/tracking, weights, spacing, radius, shadows, layout, surfaces). Copied verbatim from the DESIGN.md @theme spec.
+  - design/theme.ts — typed RN mirror (`as const`, exports `theme` + `Theme` type). RN adaptations: gradients as expo-linear-gradient objects, shadows as RN shadow props + elevation, line-heights as absolute px, 960 finite pill radius, font family names + system fallback.
+  - design/README.md — declares DESIGN.md as source of truth, documents the kebab⇄camel sync rule, lists intentional RN adaptations, documents the typecheck command.
+  - design/tsconfig.json — minimal standalone strict config (include theme.ts, noEmit).
+  - design/package.json — @wishmax/design, exports tokens.css + theme, `typecheck` script.
+- Checks run:
+  - `cd design && npx -y -p typescript@latest tsc -p tsconfig.json` → "ok / TYPECHECK OK" (passes, no errors).
+  - Spot-checked token values against DESIGN.md tables (colors #000/#fff/#333/#d9c58b, type scale 11/14/18/24/36/48, radii 4/8/12/16/960, spacing 4…160) — all match.
+- Browser evidence: N/A — US-001 ships token source files only; no runtime UI yet (showcase harness is US-002).
+- Learnings for future iterations:
+  - No global tsc; run TypeScript via `npx -y -p typescript@latest tsc` (note `-p typescript` is required — `npx typescript` alone can't resolve the `tsc` bin).
+  - DESIGN.md already contains a ready-to-copy @theme block and a theme.ts shape — materializing was transcription + RN-form adaptation, not invention.
+  - Sync contract: CSS `--color-midnight-ink` ⇄ TS `color.midnightInk`. Downstream PRDs import design/tokens.css (web) or design/theme (RN).
+---
+
+## [2026-06-30 09:40] - US-002
+- Implemented: Scaffolded the design-system showcase harness — a minimal Vite + React + TS app wired to Tailwind v4 that consumes design/tokens.css. Token sample page renders palette, status colors, gradients, type scale, spacing scale, radii, and shadows entirely from tokens.
+- Files changed:
+  - design/showcase/package.json — @wishmax/design-showcase (private), deps react 19 + vite 6 + tailwindcss 4 + @tailwindcss/vite + eslint; scripts dev/build/typecheck/lint/preview.
+  - design/showcase/vite.config.ts — react + tailwindcss plugins; dev port 5181.
+  - design/showcase/tsconfig.json + tsconfig.app.json + tsconfig.node.json — strict project-references config.
+  - design/showcase/index.html, src/main.tsx, src/vite-env.d.ts — React entry.
+  - design/showcase/src/index.css — `@import "tailwindcss"; @import "../../tokens.css";` so the DESIGN.md @theme drives Tailwind. Base html/body styled from tokens only.
+  - design/showcase/src/App.tsx — token sample page; every value is var(--…), zero literal hex/px/font.
+  - design/showcase/eslint.config.js, .gitignore.
+  - design/README.md — documented showcase install/dev/build/typecheck/lint commands and the token-consumption wiring.
+  - AGENTS.md — Unknown Stack section now has a design-system stack table (commands, port, no env/deploy).
+- Checks run:
+  - `npm install` → 185 pkgs, 0 vulnerabilities.
+  - `npm run typecheck` (tsc -b --noEmit) → clean.
+  - `npm run lint` (eslint) → "No issues found".
+  - `npm run build` (tsc -b && vite build) → built in ~0.8s; dist CSS 7.9kB.
+  - Verified tokens present in built CSS: --color-midnight-ink:#000, --spacing-160:160px, --gradient-party-pink:linear-gradient(...). Pipeline proven.
+- Browser evidence: Started dev server (HTTP 200 at http://localhost:5181). Captured a full-page screenshot via Playwright + system Chrome (/tmp/showcase.png). All sections render correctly and match DESIGN.md token values: 12-color palette, status green/orange/red, three gradients, type scale display→caption (display + heading-lg visibly larger), spacing bars growing 4→160, radius navpills(sharp)→badges(full pill), shadow-sm/lg cards. Display headlines render in system sans — Space Grotesk/Inter load in US-003.
+- Learnings for future iterations:
+  - Tailwind v4 consumes external tokens by `@import "../../tokens.css"` AFTER `@import "tailwindcss"` in the entry CSS; the imported @theme block is merged into Tailwind's theme — no tailwind.config needed.
+  - Build the design-system components inside design/showcase/ (US-004+). It is the only runtime in PRD-01; product apps come in PRD-02/03.
+  - No project-local browser; use a temp Playwright install driving system Chrome (channel: 'chrome') for screenshots.
+---
+
+## [2026-06-30 10:55] - US-003
+- Implemented: Installed the two brand fonts (Space Grotesk display + Inter text) self-hosted, applied on web via the font tokens, and delivered RN assets + expo-font registration config for PRD-03.
+- Files changed:
+  - design/fonts/inter/ — InterVariable.woff2 (web), InterVariable.ttf (RN), Inter-{Regular,Medium,SemiBold,Bold,ExtraBold}.ttf (RN static). Source: rsms/inter v4.1 (SIL OFL 1.1).
+  - design/fonts/space-grotesk/ — SpaceGrotesk-Variable.woff2 (web), SpaceGrotesk-Variable.ttf (RN), SpaceGrotesk-Variable.ttf (RN static). Source: Google Fonts (SIL OFL 1.1).
+  - design/fonts/LICENSE-Inter-OFL.txt, design/fonts/LICENSE-SpaceGrotesk-OFL.txt — license texts committed alongside the binaries.
+  - design/fonts.css — NEW. One variable @font-face per family ("Inter", "Space Grotesk"), full 100-900 axis, font-display:swap, url()s relative to design/. Defines the families the --font-display/--font-sans tokens reference.
+  - design/fonts/expo-font.config.ts — NEW. expo-font registration config: brandFontsVariable (preferred, maps theme.font.* names to variable TTFs) + brandFontsStatic (portable, one face per weight token). For PRD-03 to bundle.
+  - design/showcase/src/index.css — imports ../../fonts.css (after tailwindcss, before tokens.css) so the @font-face faces load.
+  - design/showcase/vite.config.ts — server.fs.allow: ['..'] so the dev server can serve design/fonts/ (which is above the project root). No node:url import (tsconfig.node.json has no @types/node).
+  - design/showcase/src/App.tsx — added a "Fonts" specimen section (display heading in Space Grotesk, body paragraph in Inter), tokens only.
+  - design/README.md — new "Brand fonts" section (sources, licenses, layout, web/RN wiring, fallbacks); updated Files table, RN-adaptations note, and showcase section.
+  - AGENTS.md — Unknown Stack section documents the self-hosted fonts + fs.allow + expo-font config.
+- Checks run (cd design/showcase):
+  - npm run typecheck (tsc -b --noEmit) → clean (after dropping node:url from vite.config.ts).
+  - npm run lint (eslint) → No issues found.
+  - npm run build (tsc -b && vite build) → built ~0.9s; both faces emitted: dist/assets/SpaceGrotesk-Variable-*.woff2 (41.86kB) + InterVariable-*.woff2 (352.24kB).
+- Browser evidence: Started dev server (HTTP 200 @ http://localhost:5181), screenshotted via Playwright + system Chrome → archive/2026-06-30-initial-scaffold/showcase-fonts.png. document.fonts reports "Inter ... loaded" and "Space Grotesk ... loaded"; document.fonts.check('14px Inter')=true and check('36px "Space Grotesk"')=true. Computed font-family: H1/display = "Space Grotesk", body <p> = Inter. Visual: display headline + type-scale display/heading-lg rows render in Space Grotesk's rounded grotesk; body/UI/other headings in Inter (vs US-002 where everything fell back to system sans).
+- Learnings for future iterations:
+  - Self-host fonts at design/fonts/ (one variable woff2 per family on web) and reference them only through the --font-* tokens; the @font-face family name IS the token value, so no component hardcodes a family.
+  - Vite dev 403s assets above the project root; set server.fs.allow:['..']. Keep node APIs out of vite.config.ts (no @types/node under tsconfig.node.json) — use root-relative strings.
+  - Verify webfonts programmatically with document.fonts.check()/status after document.fonts.ready, not just by eyeballing the screenshot.
+  - RN font runtime (expo-font useFonts) is verified in PRD-03; PRD-01 ships brandFontsVariable/brandFontsStatic configs + assets so PRD-03 just wires useFonts(...).
+---
+
+## [2026-06-30 17:32] - US-004
+- Implemented: Core control components (primary + ghost button, filter chip + chip group, pill badge) built entirely from design tokens, with every interaction state and the semantic generation-status variants.
+- Files changed:
+  - design/showcase/src/components/Button.tsx — primary | ghost variants; `onPhoto` (white invert), `loading` (spinner + disabled, holds size), `forceState` (showcase-only hover/pressed/disabled).
+  - design/showcase/src/components/Chip.tsx — Chip (active/selected, forceState) + ChipGroup (tint pill container, `onPhoto`).
+  - design/showcase/src/components/Badge.tsx — soft/strong ink-tint pill + optional `status` dot (done/processing/failed) colored from --color-status-* via a token map (inline `var(--…)`, not a literal).
+  - design/showcase/src/components/index.ts — barrel export.
+  - design/showcase/src/components.css — NEW. All component styling, token-only. Real :hover/:active/:disabled pseudo-classes + matching .is-force-* classes for static state display. Primary hover 0.85 / pressed 0.7; ghost fills black on hover/press; disabled = silver bg + fog label; active chip = white + --shadow-sm; on-photo active chip = --color-warm-sand; spinner sized from --spacing-16, --radius-full.
+  - design/showcase/src/index.css — `@import "./components.css";` (after tokens.css).
+  - design/showcase/src/App.tsx — new "Core controls" section: interactive primary-loading button, interactive gender ChipGroup, and full forced-state matrices for every control + badge variants. Added Cell/Row/PhotoStand/SubLabel layout helpers (token-only). `import { useState }`.
+  - DESIGN.md — added Component-text-tokens table (--text-label 12px, --text-ui-lg 16px), Ink-tints note (--surface-tint-soft/-strong), and both into the @theme CSS block + theme.ts shape.
+  - design/tokens.css + design/theme.ts — materialized the 4 new tokens (text.label/uiLg with px line-heights + tracking on RN; surface.tintSoft/tintStrong as rgba strings).
+- Checks run:
+  - Tokens typecheck: `cd design && npx -y -p typescript@latest tsc -p tsconfig.json` → ok.
+  - `cd design/showcase`: npm run typecheck (tsc -b --noEmit) → clean; npm run lint (eslint) → No issues found; npm run build → built ~0.86s, dist CSS 13.69kB.
+  - Token-literal grep over src/components.css + src/components/: no hex, no font-family, no font-size px — only 1px/2px border & focus-outline widths (border-width is not a tokenized value; consistent with US-002 App.tsx).
+  - Verified new tokens + component classes present in built dist CSS (--text-label:12px, --text-ui-lg:16px, --surface-tint-soft:#0000000d, --surface-tint-strong:#0003; .wm-btn--primary/.wm-chip-group/.wm-badge__dot).
+- Browser evidence: Dev server HTTP 200 @ http://localhost:5181; Playwright + system Chrome. Computed styles resolve to the intended tokens: primary bg rgb(0,0,0) / color rgb(255,255,255) / radius 8px; disabled bg rgb(204,204,204); ghost border rgb(0,0,0) / font-size 16px; active chip bg white + boxShadow `rgba(0,0,0,0.1) 0px 0px 6px 0px` (--shadow-sm); chip group bg rgba(0,0,0,0.05); on-photo active chip color rgb(217,197,139) (#d9c58b Warm Sand); badge bg rgba(0,0,0,0.05) / font-size 12px; status dots rgb(49,196,49)/rgb(255,174,0)/rgb(255,0,0). Spinner present on loading button. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us004-core-controls.png (full page) + showcase-us004-core-controls-section.png (section crop) — every state renders as designed.
+- Learnings for future iterations:
+  - Pseudo-state styling belongs in a token-only CSS file (inline styles can't express :hover/:active/:disabled); expose a `forceState` prop + `.is-force-*` classes so the showcase can prove all states statically. Reuse this pattern for US-005/006/007 surfaces.
+  - Honor DESIGN.md component specs literally — when a needed size/tint isn't a token yet, add it to DESIGN.md + both token files before consuming. Two component text sizes (12/16) and two ink-tint surfaces were genuinely missing from US-001's materialization.
+  - Build US-005+ components in design/showcase/src/components/ and export via index.ts; render their state matrices in App.tsx (US-008 assembles the full reference page).
+---
+
+## [2026-06-30 19:20] - US-005
+- Implemented: Feed Photo Tile (THE hero component) + Before/After Card, both token-only, with overlays, selection/pressed/shimmer states, and Before/After labels.
+- Files changed:
+  - design/showcase/src/components/FeedPhotoTile.tsx — NEW. <button> tile: aspect-ratio 3/4, --radius-images, overflow-hidden full-bleed image (`src` → <img object-fit:cover>; `placeholder` token → gradient stand-in). Optional `category` (top-left) + `premium` (top-right, inline mono lock SVG fill=currentColor) ride over a --gradient-scrim. States: `loading` (shimmer), `selected` (black ring), `forceState="pressed"`. Overlays use Badge onPhoto.
+  - design/showcase/src/components/BeforeAfterCard.tsx — NEW. Two FeedPhotoTiles paired in a white card (--surface-card / --radius-cards / --shadow-sm); each pane has an absolute Before/After onPhoto pill label; `selected` rings both.
+  - design/showcase/src/components/Badge.tsx — added `onPhoto` prop (white text on --surface-tint-strong frosted pill) + a `.wm-badge__icon` slot for the lock glyph.
+  - design/showcase/src/components/index.ts — export FeedPhotoTile + BeforeAfterCard (+ prop types).
+  - design/showcase/src/components.css — added .wm-tile* (tile, img, placeholder, scrim, overlay, selected ring, pressed scale, shimmer + @keyframes wm-shimmer), .wm-ba-card* (grid card, pane, label), .wm-badge--on-photo, .wm-badge__icon. Token-only.
+  - design/showcase/src/App.tsx — new "Feed photo tile & before/after" section: tile state matrix (default/category/premium/both/selected/pressed/loading), an interactive pick-a-tile feed row, and before/after cards (default + selected). Added TileStand + FeedComponents helpers; before/after stand width = calc(var(--spacing-160) * 2) (unitless multiplier, like the accepted opacity/transform literals).
+  - DESIGN.md + design/tokens.css + design/theme.ts — added ONE token first: --gradient-scrim (linear-gradient 180deg rgba(0,0,0,.45) 0% → rgba(0,0,0,0) 38%) / theme.gradient.scrim — the concrete form of the Overlay Ink surface (documented under Surfaces + in both @theme and theme.ts).
+- Checks run:
+  - Tokens typecheck: `cd design && npx -y -p typescript@latest tsc -p tsconfig.json` → ok.
+  - `cd design/showcase`: npm run typecheck (tsc -b --noEmit) → clean; npm run lint (eslint) → No issues found; npm run build → built ~0.89s, dist CSS 15.66kB.
+  - Literal grep over src/components.css + src/components/ → NONE FOUND (only 1px/2px outline & border widths remain, consistent with US-002/US-004).
+  - Verified --gradient-scrim + .wm-tile/.wm-ba-card/.wm-badge--on-photo present in built dist CSS.
+- Browser evidence: Dev server HTTP 200 @ http://localhost:5181; Playwright + system Chrome. Computed styles resolve to the intended tokens: tile borderRadius 12px, aspectRatio "3 / 4", overflow hidden; placeholder bg = --gradient-party-pink; scrim bg = linear-gradient(rgba(0,0,0,0.45)…); selected outline rgb(0,0,0) 2px; onPhoto badge color rgb(255,255,255) / bg rgba(0,0,0,0.2) / radius 960px / fontSize 12px; shimmer animationName wm-shimmer; before/after card gridTemplateColumns "148px 148px" / radius 12px / boxShadow rgba(0,0,0,0.1) 0px 0px 6px / bg rgb(255,255,255); Before/After labels render (×2 per card). Screenshots: archive/2026-06-30-initial-scaffold/showcase-us005-feed-tiles-section.png + showcase-us005-full.png — all tile states, the interactive feed row (Classic selected), and both before/after cards render as designed.
+- Learnings for future iterations:
+  - Photo components take a real `src`; showcase stands in gradient tokens via a `placeholder` prop (DESIGN.md Imagery register 2 sanctions decorative gradients inside template tiles — distinct from the "no gradient button fills" rule).
+  - When a label must sit on photography, use Badge `onPhoto` + the --gradient-scrim overlay; both reusable for US-006/007.
+  - Token-only shimmer = tint-strong band sweeping over a tint-soft base via @keyframes (no color literals); selection = 2px midnight-ink outline ring (not border, avoids reflow).
+---
+
+## [2026-06-30 21:05] - US-006
+- Implemented: Standard Content Card + Modal/Sheet surface, both token-only, with the DESIGN.md two-type-size rule enforced structurally and a real (not mocked) overlay mode for the modal/sheet.
+- Files changed:
+  - design/showcase/src/components/Card.tsx — NEW. White content card (--surface-card / --radius-cards 12px / --shadow-sm / padding 12-16-16). Exactly two type sizes: title --text-heading-sm 18px bold ink + body --text-body 14px regular slate. Optional `media` slot (bleeds a FeedPhotoTile flush to the padded top edge via negative margin). `Omit<…, 'title'>` to avoid the HTML title attr collision.
+  - design/showcase/src/components/Sheet.tsx — NEW. One white surface (--surface-card / --shadow-lg) in `modal` (--radius-modals 16px, centered) + `sheet` (16px top corners only + grab handle, bottom-anchored) variants. `inline` mode = panel only (static showcase); overlay mode = fixed --surface-tint-strong scrim + role=dialog panel, dismissed by scrim-click / Escape (useEffect keydown) / close (×) button. Title + body keep to the two type sizes; `actions` slot holds footer Buttons.
+  - design/showcase/src/components/index.ts — export Card + Sheet (+ prop/variant types).
+  - design/showcase/src/components.css — added .wm-card* (card, media bleed, title, body) + .wm-overlay* (fixed scrim, modal-centered / sheet-bottom) + .wm-sheet* (panel, modal/sheet radius, handle, header, title, close button + icon, body, actions) + fade/pop/slide @keyframes. Token-only.
+  - design/showcase/src/App.tsx — new "Cards & surfaces" section: content-card row (title+body / with-media / testimonial), inline modal + sheet panels side by side, and an interactive overlay row (Open modal / Open sheet → real scrim + dismiss). Imports Card + Sheet.
+- Checks run (cd design/showcase):
+  - npm run typecheck (tsc -b --noEmit) → clean (after Omit<…,'title'> fix).
+  - npm run lint (eslint) → No issues found.
+  - npm run build → built ~0.89s, dist CSS 19.15kB.
+  - Literal grep over Card.tsx + Sheet.tsx + components.css (filtered for non-var hex/font/font-size/color) → none found (token-only). .wm-card/.wm-sheet/.wm-overlay classes present in built CSS.
+  - No new tokens needed — --radius-cards/-modals, --shadow-sm/-lg, --surface-card/-tint-strong, the text/spacing scale all already existed.
+- Browser evidence: Dev server HTTP 200 @ http://localhost:5181; Playwright + system Chrome. Computed styles resolve to tokens: card borderRadius 12px / boxShadow rgba(0,0,0,0.1) 0 0 6px (--shadow-sm) / bg rgb(255,255,255); card title fontSize 18px; card body 14px color rgb(102,102,102) (slate). Modal: radius 16px / shadow rgba(0,0,0,0.1) 0 0 20px (--shadow-lg) / white. Sheet: top radius 16px, bottom 0 / shadow-lg. Overlay scrim bg rgba(0,0,0,0.2) (--surface-tint-strong); Escape closed the modal overlay; scrim-click closed the bottom sheet. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us006-cards-surfaces-section.png + showcase-us006-modal-overlay.png + showcase-us006-sheet-overlay.png.
+- Learnings for future iterations:
+  - The US-007 paywall is a Sheet/modal surface — build it ON TOP of Sheet (plan cards + display price + Restore link + black CTA as the body/actions), don't reinvent the overlay/scrim.
+  - A `title` prop on an HTMLAttributes-extending interface collides with the DOM title attr; Omit it when it needs ReactNode.
+  - Modal backdrop scrim = --surface-tint-strong (0.2 ink wash), not the solid overlay-ink surface. Modal max-width via calc(--spacing-160 * 3) keeps it token-derived (no literal px).
+---
+
+## [2026-06-30 22:40] - US-007
+- Implemented: Paywall surface — selectable plan cards, prominent display-size price, "Restore purchases" link, single solid-black CTA, with a gradient wash allowed only as the section background behind the surface. Built ON TOP of the US-006 Sheet (no reinvented overlay/scrim).
+- Files changed:
+  - design/showcase/src/components/Paywall.tsx — NEW. Composes `Sheet variant="modal"`; renders a radiogroup of plan cards (<button role=radio>) + a footer (full-width black Button CTA + a Restore link). Controlled `selectedId`/`onSelectPlan` with an uncontrolled fallback. CheckIcon = inline mono check (currentColor → white over the ink-filled radio). `Pick<SheetProps, inline|open|onClose|ariaLabel>` forwards overlay behaviour.
+  - design/showcase/src/components/Sheet.tsx — body `<p>`→`<div>` (one-line enabling change) so the Sheet surface can legally hold the paywall's block content. Existing text bodies render identically.
+  - design/showcase/src/components/index.ts — export Paywall + PaywallProps/PaywallPlan.
+  - design/showcase/src/components.css — added .wm-paywall*, .wm-plan* (card border-color-swap selection + black-fill radio/check + display-size price), .wm-paywall__footer/__cta/__restore. Token-only.
+  - design/showcase/src/App.tsx — new "Paywall surface" section: inline paywall on a --gradient-sky-periwinkle SECTION wash + an interactive overlay (Go Premium → real scrim/Escape/close). Added PAYWALL_PLANS + PaywallSurface; imported Paywall.
+- Checks run (cd design/showcase): npm run typecheck (tsc -b --noEmit) → clean; npm run lint (eslint) → No issues found; npm run build → built ~0.92s, dist CSS 21.98kB. Literal grep over Paywall.tsx + components.css → NONE FOUND (clean; only 1px/2px border & outline widths + text-underline-offset:2px remain). paywall/plan classes present in built dist CSS. No new tokens needed (heading-lg, radius-cards/-modals, shadow-sm/-lg, color-silver/-midnight-ink, surface-card all existed).
+- Browser evidence: Dev server HTTP 200 @ http://localhost:5181; Playwright + system Chrome. Computed styles resolve to tokens: selected plan borderColor rgb(0,0,0) / radius 12px / boxShadow shadow-sm; radio bg rgb(0,0,0) + check opacity 1; price fontSize 36px family Inter. Unselected: border rgb(204,204,204) (silver) / radio bg transparent / check opacity 0. Restore link text "Restore purchases" present. CTA bg rgb(0,0,0) / backgroundImage "none" (NO gradient on the button) / color white / full width. Section wash wrapper backgroundImage = gradient (present). Interaction: clicking plan[1] moved selection Annual→Monthly; overlay scrim rgba(0,0,0,0.2), role=dialog visible, Escape dismissed it. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us007-paywall-section.png + showcase-us007-paywall-overlay.png.
+- Learnings for future iterations:
+  - "Price prominent in display type" = display-size SCALE in Inter (numerals → Inter per DESIGN.md), not the Space Grotesk display face. Documented in Codebase Patterns.
+  - Build overlay surfaces on top of Sheet; the body is now a <div> so rich content is legal. Footer goes through `actions`.
+  - Selectable "black border" cards: swap border-color (no reflow) + a black-fill radio accent — distinct from the US-005 outline-ring selection.
+  - The gradient wash belongs on a SECTION wrapper behind the surface, never on the CTA — verified via computed backgroundImage:none on the button.
+---
+
+## [2026-06-30 23:55] - US-008
+- Implemented: Assembled the whole design system onto one navigable reference showcase page and ran the final verification pass. Every US-004→US-007 component variant/state plus the full foundation set (palette, status, gradients, fonts, type, spacing, radius, shadows) now reads as one coherent, anchor-navigable page that proves the token pipeline end to end.
+- Files changed:
+  - design/showcase/src/App.tsx — added `id` to `Section`; new `GroupHeading` (Space Grotesk display divider, eyebrow + title) and `Nav` (token-only in-page table of contents driven by a `TOC` array, grouped Foundations / Components, anchor links → section ids). Restructured the page body into Foundations (Fonts, Palette, Status colors, Gradients, Type scale, Spacing, Radius, Shadows) then Components (Core controls, Feed & before/after, Cards & surfaces, Paywall); gave all 12 sections scroll-target ids. No component edits; no new tokens.
+- Checks run (cd design/showcase):
+  - npm run typecheck (tsc -b --noEmit) → clean.
+  - npm run lint (eslint) → No issues found.
+  - npm run build (tsc -b && vite build) → built ~0.89s, dist CSS 22.05kB.
+  - Everything still consumes design/tokens.css (no hardcoded copies) — the page is rendered entirely from var(--…) / the existing components, which themselves are token-only.
+- Browser evidence: Dev server HTTP 200 @ http://localhost:5181; Playwright + system Chrome. Verified all 12 nav anchors resolve (missing: []), both "Foundations" + "Components" group headings present, 12 section[id]s present (fonts/palette/status/gradients/type/spacing/radius/shadows/controls/feed/cards/paywall), nav bg rgba(0,0,0,0.05) (--surface-tint-soft), h1 fontFamily "Space Grotesk", primary button bg rgb(0,0,0); clicking the #paywall anchor scrolls to the paywall section. Screenshots: archive/2026-06-30-initial-scaffold/showcase-us008-full-reference.png (full page — every section renders top to bottom) + showcase-us008-components-anchor.png (paywall via anchor nav).
+- Learnings for future iterations:
+  - US-008 was assembly + verification, not net-new components — the per-story sections (US-004→US-007) already lived in App.tsx; this story made them a single navigable reference and proved the whole pipeline at once.
+  - To extend the reference page: give each new `<Section>` an `id`, add a matching `{ id, label }` to the `TOC` array, and place it under the right group. The Nav is fully token-driven (no literals) like the rest of the page.
+  - Only US-009 (enforce the system in agent instructions, p4) remains in PRD-01.
+---
+
+## [2026-06-30 24:40] - US-009
+- Implemented: Baked the DESIGN.md/tokens-only rule into the Ralph loop so the agent follows the design system on every iteration, and added a standing reviewer gate. Docs/enforcement only — no UI, no component changes.
+- Files changed:
+  - CLAUDE.md — Design Requirements rewritten: explicit "Every iteration, read DESIGN.md before any UI work" (non-negotiable, every loop not just the first); tokens-only forbids hardcoded color/type/spacing/radius/shadow with concrete token paths (design/tokens.css web / design/theme.ts RN); added a "Reject any change… token-only is a merge gate" line and the gradients-never-on-buttons Don't.
+  - AGENTS.md — Operating Rules: same every-iteration read-DESIGN.md + tokens-only rule, plus a new "Reviewer gate" line (reject hardcoded values / DESIGN.md divergence). QA Gate now lists "UI code is token-only — matches DESIGN.md".
+  - progress.txt ## Codebase Patterns — line records verbatim: "DESIGN.md is the visual source of truth; consume tokens, never hardcode color/type/spacing/radius." (with token paths + a pointer to the CLAUDE.md/AGENTS.md/checklist enforcement).
+  - checklist.md — new "PRD-01 / US-009" section: a Standing reviewer gate (reject PRs that hardcode a visual value OR diverge from DESIGN.md, confirm DESIGN.md was read this iteration, token-only grep) + story-acceptance items.
+  - prd.json — US-009 passes:true (+notes); root status "planned" → "qa" (all 9 stories now pass).
+  - PRDS.md — PRD-01 status In Progress → QA.
+- Checks run:
+  - Tokens typecheck: `cd design && npx -y -p typescript@latest tsc -p tsconfig.json` → ok.
+  - Showcase typecheck: `cd design/showcase && npm run typecheck` (tsc -b --noEmit) → clean.
+  - jq validate prd.json → valid; passes:false count = 0 (all 9 stories pass).
+  - Grep verification: CLAUDE.md + AGENTS.md carry the read-DESIGN.md / tokens-only / reviewer-gate rules; the exact progress.txt pattern line and the checklist.md reviewer item both present.
+- Browser evidence: N/A — docs/enforcement story, no UI changed.
+- Learnings for future iterations:
+  - The enforcement now lives in three layers: instruction (CLAUDE.md + AGENTS.md, read DESIGN.md every loop), memory (this Codebase Patterns line), and review (checklist.md standing reviewer gate). Keep all three in sync if the design rule ever changes.
+  - PRD-01 (Design System) is complete: all 9 stories pass. Next is PRD-02 (Landing Page, ralph/landing-page) or PRD-03 (App MVP, ralph/app-mvp), both of which consume design/tokens.css (web) / design/theme.ts + design/fonts/ (RN).
 ---

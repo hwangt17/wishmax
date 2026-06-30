@@ -1,0 +1,33 @@
+/*
+ * Wishmax brand web fonts — @font-face declarations.
+ *
+ * Defines the two font families referenced by the --font-display and
+ * --font-sans tokens in tokens.css (the source of truth is ../DESIGN.md):
+ *   - "Space Grotesk" → display / hero headlines only (>= 26px)
+ *   - "Inter"           → all UI text, body, labels, buttons, captions
+ *
+ * Both are self-hosted variable fonts (single file, full weight axis), so
+ * one @font-face per family covers every weight token (400-825). url()s are
+ * relative to THIS file (design/), so any web app that bundles design/fonts/
+ * and imports this stylesheet gets the faces. Fallback stacks live in the
+ * font tokens (tokens.css), so missing glyphs degrade to the system grotesk.
+ *
+ * Licenses: design/fonts/LICENSE-Inter-OFL.txt (SIL OFL 1.1),
+ *           design/fonts/LICENSE-SpaceGrotesk-OFL.txt (SIL OFL 1.1).
+ */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900; /* variable axis — covers every weight token */
+  font-display: swap;
+  src: url("./fonts/inter/InterVariable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 100 900; /* variable axis — display token uses Medium 500 */
+  font-display: swap;
+  src: url("./fonts/space-grotesk/SpaceGrotesk-Variable.ttf") format("truetype");
+}
