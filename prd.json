@@ -1,0 +1,26 @@
+{
+  "title": "Wishmax Initial Scaffold",
+  "branchName": "ralph/initial-scaffold",
+  "status": "planned",
+  "sourcePrd": "tasks/prd-initial-scaffold.md",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Replace placeholder PRD with the first real Wishmax build scope",
+      "priority": "p1",
+      "description": "Create the first real product PRD before implementation starts.",
+      "acceptanceCriteria": [
+        "A markdown PRD exists in tasks/ with goals, non-goals, user stories, acceptance criteria, edge cases, and QA requirements.",
+        "prd.json is updated to match the PRD.",
+        "progress.txt includes any carried-forward product or codebase learnings.",
+        "PRDS.md lists the new PRD."
+      ],
+      "verification": [
+        "Review tasks/ PRD for completeness.",
+        "Validate prd.json with jq.",
+        "Confirm every story has passes:false before the build starts."
+      ],
+      "passes": false
+    }
+  ]
+}

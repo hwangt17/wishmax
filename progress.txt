@@ -1,0 +1,21 @@
+# Ralph Progress Log
+
+Started: 2026-06-30
+
+## Codebase Patterns
+
+- This repo starts as a Ralph-loop scaffold. Add stack-specific build, test, env, and deploy patterns here as soon as the app foundation exists.
+- Use `prd.json` as execution state and `progress.txt` as persistent agent memory.
+- Implement exactly one incomplete user story per Ralph loop invocation.
+
+---
+
+## 2026-06-30 14:20 - Repo setup
+
+- Implemented: Initial Ralph-loop workflow scaffold for Wishmax.
+- Files changed: `AGENTS.md`, `CLAUDE.md`, `ralph.sh`, `prompt.md`, `prd.json`, `PRDS.md`, `checklist.md`, `tasks/templates/*`, `skills/*/SKILL.md`.
+- Checks run: `bash -n ralph.sh`, `jq empty prd.json`.
+- Learnings for future iterations:
+  - Wishmax GitHub repo was empty at setup time.
+  - First real implementation PRD should replace the placeholder `prd.json`.
+---
