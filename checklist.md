@@ -86,3 +86,27 @@ token-literal audit before marking any UI story done:
 - [x] Build passes: `cd web && npm run build`.
 - [x] Browser-verified (Playwright + system Chrome) at 390 / 768 / 1280:
       screenshots `/tmp/wm-us003-{mobile,tablet,desktop}.png`.
+
+### US-004 — "How it works" section (3 steps)
+
+- [x] Three clear steps rendered as an ordered list: 1. Upload a few selfies,
+      2. Pick photos you love, 3. Get profile-ready shots. Numbered `Step N`
+      Badge on each card.
+- [x] Each step has a visual + one tight sentence: a filled mono-weight icon
+      (currentColor ink, 20px, per DESIGN.md) on a soft ink-tint chip, an
+      Inter-700 title, and a single sentence of body copy (2 free-text sizes per
+      card → Standard Content Card spec, max-two-type-sizes respected).
+- [x] Section `id="how-it-works"` matches the header + footer nav anchors.
+- [x] Responsive using tokens: single column at 390px (one grid track), three
+      columns at 768 / 1280px (`repeat(3, 1fr)`). Cards = white surface,
+      `--shadow-sm`, `radius-cards` 12px. Section on the white canvas with
+      `box-shadow: none` (DESIGN: elevation is for cards only).
+- [x] Section title uses Inter 700 24px (NOT the display face — Space Grotesk is
+      hero-only ≥26px).
+- [x] Token-only: token-literal audit on `HowItWorks.tsx` + `howitworks.css`
+      is CLEAN.
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build`.
+- [x] Browser-verified (Playwright + system Chrome) at 390 / 768 / 1280:
+      screenshots `/tmp/wm-us004-{390,768,1280}.png`.

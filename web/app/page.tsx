@@ -7,11 +7,13 @@
  * social proof, FAQ, waitlist) land in the later PRD-02 user stories.
  */
 import { Hero } from "./components/Hero";
+import { HowItWorks } from "./components/HowItWorks";
 
 export default function Home() {
   return (
     <main>
       <Hero />
+      <HowItWorks />
     </main>
   );
 }

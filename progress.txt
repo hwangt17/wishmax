@@ -50,7 +50,7 @@ Depends on PRD-01: consumes design/tokens.css + design/fonts.css + the design/sh
 - US-001 Next.js + Tailwind scaffold with design tokens — passes: true (web/ scaffolded, tokens+fonts wired, all checks green)
 - US-002 Global layout, nav & footer — passes: true (sticky header + footer in root layout; responsive mobile nav; ported Button; all checks green)
 - US-003 Hero section with hook + before/after visual — passes: true (Hero: hook headline + pain/promise subhead + above-fold CTA + BeforeAfterCard proof via next/image; ported Badge/FeedPhotoTile/BeforeAfterCard; all checks green)
-- US-004 "How it works" section (3 steps) — passes: false
+- US-004 "How it works" section (3 steps) — passes: true (3 Standard Content Cards, mono icons + numbered Badge + Inter-700 title + one sentence; single col → 3 col; all checks green)
 - US-005 Transformation gallery / sample feed showcase — passes: false
 - US-006 Benefits / pain-point section — passes: false
 - US-007 Social proof section — passes: false
@@ -113,4 +113,15 @@ Depends on PRD-01: consumes design/tokens.css + design/fonts.css + the design/sh
   - Recorded the next/image port recipe + the self-authored hero-imagery approach in Codebase Patterns (see "Landing site imagery & PRD-01 component port"). US-005 gallery should reuse the FeedPhotoTile + gen-hero-images.mjs pattern.
   - The web FeedPhotoTile intentionally diverges from the showcase one (next/image fill, non-interactive div) — marketing tiles don't need the app's pressed/selected/loading button states, and next/image is required for optimization + LCP preload.
   - Real licensed before/after + testimonial photography remains an open question (imagery ownership) — US-005/US-007 will hit the same gap; the gen-hero-images.mjs stand-in pattern + honest caption is the interim answer until assets are provided.
+---
+
+## [2026-07-01 19:30] - US-004
+- Implemented: "How it works" section (`web/app/components/HowItWorks.tsx` + `howitworks.css`, rendered by `page.tsx` after `<Hero/>`). `id="how-it-works"` matches the existing header + footer nav anchors, so those links now land here. Three steps rendered as a semantic `<ol>`: (1) Upload a few selfies, (2) Pick photos you love, (3) Get profile-ready shots. Each step is a DESIGN.md Standard Content Card (white surface, `--shadow-sm`, `--radius-cards`) holding a filled mono-weight inline-SVG icon (upload / heart / sparkle, `currentColor` = ink, 20px) on a soft ink-tint chip, a numbered `Step N` Badge (reused PRD-01 `Badge`), an Inter-700 title, and ONE tight sentence of slate body copy — exactly two free-text sizes per card. Section header uses an eyebrow Badge + Inter-700 24px title + a slate lede. Mobile-first single column → `repeat(3, 1fr)` at the ≥768px breakpoint. Section sits on the white canvas (rhythm against the hero's periwinkle wash) with no box-shadow.
+- Files changed: web/app/components/HowItWorks.tsx (new), web/app/components/howitworks.css (new), web/app/globals.css (@import howitworks.css), web/app/page.tsx (render <HowItWorks/>); prd.json (US-004 passes:true + notes), progress.txt, checklist.md, PRDS.md.
+- Checks run: `cd web && npm run typecheck` → no errors; `npm run lint` → No issues found; `npm run build` → compiled + 3 static pages, success. Token-literal audit on HowItWorks.tsx + howitworks.css → CLEAN (no hardcoded visual literals).
+- Browser evidence: Playwright + system Chrome at http://localhost:3100, breakpoints 390/768/1280. Section bg rgb(255,255,255) (white canvas), boxShadow `none` (DESIGN invariant — no shadow on the section). 3 cards, each white bg + boxShadow `rgba(0,0,0,0.1) 0px 0px 6px 0px` (--shadow-sm) + borderRadius 12px (--radius-cards), each with 1 icon SVG + a `Step 1/2/3` Badge + a title + one sentence (108/128/123 chars). Grid: 1 track @390 (single column) → `repeat(3,1fr)` @768 (224px×3) and @1280 (368px×3). Section title fontFamily "Inter…" (NOT Space Grotesk), 24px, rgb(0,0,0). Screenshots: /tmp/wm-us004-{390,768,1280}.png — clean, on-brand.
+- Learnings for future iterations:
+  - Section anchors are already wired in the nav (US-002): the header/footer link to `#how-it-works` / `#examples` / `#faq`. When building a section, set the matching `id` on the `<section>` so those links work — no header change needed. US-005 must use `id="examples"`, US-009 `id="faq"`, US-010 `id="waitlist"`.
+  - Section titles below the hero use **Inter 700** (heading 24px), never the Space Grotesk display face — DESIGN.md reserves the display face for hero statements ≥26px. Keep the eyebrow-Badge + Inter-700-title + slate-lede header pattern for the remaining sections for visual consistency.
+  - Filled mono inline-SVG icons (`fill="currentColor"`, ink) drawn at 20px on a `--surface-tint-soft` chip satisfy DESIGN.md's "filled mono-weight shapes, only #000/#fff" imagery rule and stay token-only (the icon color is a token via currentColor). Reuse this icon-chip pattern for benefits (US-006) / FAQ.
 ---

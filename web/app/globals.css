@@ -21,6 +21,7 @@
 @import "./components/showcase.css";
 /* Landing sections. */
 @import "./components/hero.css";
+@import "./components/howitworks.css";
 
 html,
 body {

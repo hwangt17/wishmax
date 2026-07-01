@@ -1,0 +1,133 @@
+/*
+ * "How it works" section styling (US-004).
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
+ * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
+ * Cards follow the DESIGN.md "Standard Content Card" spec (white surface,
+ * --shadow-sm, radius-cards, Inter-700 title + slate body). Section sits on the
+ * white canvas (no gradient) for rhythm against the hero's periwinkle wash and
+ * carries NO box-shadow itself (elevation is for cards only).
+ *
+ * Mobile-first single column; three columns from the tablet breakpoint up.
+ * Non-visual literals only: 1fr grid tracks, ch measures, media breakpoints.
+ */
+
+.wm-how {
+  background: var(--surface-canvas);
+}
+
+.wm-how__inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-80) var(--spacing-24);
+}
+
+/* --------------------------------------------------------------- Heading -- */
+
+.wm-how__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+  margin-bottom: var(--spacing-40);
+}
+
+.wm-how__eyebrow {
+  display: inline-flex;
+}
+
+/* Section title — Inter 700 (NOT the display face; Space Grotesk is hero-only
+   ≥ 26px per DESIGN.md). */
+.wm-how__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  max-width: 20ch;
+}
+
+.wm-how__lede {
+  margin: 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-slate);
+  max-width: 52ch;
+}
+
+/* ----------------------------------------------------------------- Steps -- */
+
+.wm-how__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-20);
+}
+
+/* Standard Content Card. Two type sizes of free text (title + copy); the step
+   number rides on the Badge component. */
+.wm-how__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  background: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-24) var(--spacing-20);
+}
+
+/* Icon chip — filled mono icon on a soft ink-tint square (DESIGN.md ink
+   tints), radius-images. */
+.wm-how__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  border-radius: var(--radius-images);
+  background: var(--surface-tint-soft);
+  color: var(--color-midnight-ink);
+}
+
+.wm-how__icon svg {
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+  display: block;
+}
+
+.wm-how__step {
+  display: inline-flex;
+}
+
+.wm-how__card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+}
+
+.wm-how__card-copy {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--color-slate);
+}
+
+/* --------------------------------------------------------- Tablet and up -- */
+
+@media (min-width: 768px) {
+  .wm-how__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-24);
+  }
+}

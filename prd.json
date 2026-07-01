@@ -66,8 +66,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Done 2026-07-01. HowItWorks section (web/app/components/HowItWorks.tsx + howitworks.css, rendered by page.tsx after Hero) with id='how-it-works' matching the header/footer nav anchors. Three steps as an <ol>: 1. Upload a few selfies, 2. Pick photos you love, 3. Get profile-ready shots — each a Standard Content Card (white surface, --shadow-sm, radius-cards 12px) with a filled mono-weight inline-SVG icon (currentColor ink, 20px per DESIGN.md imagery) on a soft ink-tint chip, a numbered 'Step N' Badge, an Inter-700 title, and ONE tight sentence (2 free-text sizes/card → max-two-type-sizes honored). Section title Inter 700 24px (NOT Space Grotesk — display face is hero-only ≥26px). Mobile-first single column → repeat(3,1fr) at ≥768px. Section on the white canvas (box-shadow none — elevation is cards-only). Typecheck, lint, build all pass; token-literal audit CLEAN. Browser-verified 390/768/1280 (single col → 3 col, white section no shadow, cards --shadow-sm/12px, 3 icons+badges+titles+sentences)."
     },
     {
       "id": "US-005",
