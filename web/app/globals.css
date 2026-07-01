@@ -452,7 +452,9 @@ input {
 
 .device-frame {
   position: relative;
-  width: clamp(240px, 26vw, 340px);
+  /* Grows with viewport width, but capped by height (phone is ~2x taller than
+     wide) so the tall device never overflows / clips on shorter screens. */
+  width: min(clamp(260px, 28vw, 480px), 42vh);
   aspect-ratio: 1419 / 2796;
   filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
 }
