@@ -1,0 +1,22 @@
+<!--
+  Wishmax favicon / browser-tab mark (Next.js app/icon file convention → emits
+  <link rel="icon" href="/icon.svg">, which also stops the browser's default
+  /favicon.ico request that otherwise 404s).
+
+  Black/white action system per DESIGN.md: a midnight-ink tile with a pure-canvas
+  "W". SVG assets can't read CSS vars, so — same carve-out as app/opengraph-image
+  and the gen-*.mjs image generators — the two literals below MIRROR the design
+  tokens: #000 = --color-midnight-ink, #fff = --color-pure-canvas. No other hues.
+  The 6px corner radius tracks the --radius-buttons (8px) rounding at this scale.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Wishmax">
+  <rect width="32" height="32" rx="6" fill="#000000" />
+  <path
+    d="M6.5 9 L11 23 L16 13.5 L21 23 L25.5 9"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

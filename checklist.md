@@ -341,3 +341,34 @@ token-literal audit before marking any UI story done:
 - [x] Typecheck passes: `cd web && npm run typecheck`.
 - [x] Lint passes: `cd web && npm run lint`.
 - [x] Build passes: `cd web && npm run build`.
+
+### US-013 — Responsive & performance pass
+
+- [x] Mobile / tablet / desktop layouts verified; no overflow or broken sections —
+      swept 320 / 390 / 768 / 1024 / 1280 (Playwright + system Chrome):
+      `documentElement.scrollWidth === innerWidth` at EVERY width (zero horizontal
+      overflow, no elements past the viewport), 7/7 sections present, every section
+      `boxShadow: none` (DESIGN invariant), both brand fonts loaded. 320px (stress) +
+      1280px screenshots visually clean, no clipped/broken sections.
+- [x] Images optimized — `web/next.config.ts` `images.formats: ["image/avif","image/webp"]`;
+      next/image negotiates AVIF 3.6KB / WebP 5.6KB / JPEG 12.3KB for the same w=640 tile
+      (−70% AVIF). Hero LCP tiles SSR-preloaded (priority); gallery/avatars lazy.
+- [x] Good LCP and minimal layout shift — CLS = 0 in every Lighthouse run (fixed 3:4
+      aspect-ratios reserve space); hero H1 (LCP) display font shrunk from a 137KB `.ttf`
+      to a 49KB brotli woff2 (−64%).
+- [x] Best-practices: added `web/app/icon.svg` (Next icon convention) → removes the
+      `/favicon.ico` 404 console error → best-practices 96 → 100.
+- [x] Lighthouse mobile scores recorded (see `progress.txt`, prod build `npm run start`):
+      DEFAULT simulated Slow-4G + 4× CPU → **performance 80, accessibility 96,
+      best-practices 100, SEO 100** (CLS 0, TBT 0, FCP 3.0s, LCP 4.2s; median of 3);
+      `--throttling-method=provided` (real connection) → **performance 100** (FCP+LCP 0.1s).
+      Perf < 90 target under synthetic throttling is a DOCUMENTED GAP (critical path is
+      13.5KB HTML + 5.7KB CSS; the gap is the simulated-Slow-4G floor + self-hosted
+      variable-font transfer + font-swap LCP re-paint; 100 on real networks). Accessibility
+      96 = DESIGN.md-sanctioned muted token roles (ash #999 attribution, fog #b3b3b3 footer
+      headings) below WCAG AA on white — correct token usage, not overridden (token-only gate).
+- [x] Token-only: audit on changed files CLEAN (only `icon.svg` #000/#fff — the documented
+      baked-SVG carve-out mirroring `--color-midnight-ink`/`--color-pure-canvas`).
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build`.

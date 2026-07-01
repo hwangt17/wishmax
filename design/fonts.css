@@ -29,5 +29,11 @@
   font-style: normal;
   font-weight: 100 900; /* variable axis — display token uses Medium 500 */
   font-display: swap;
-  src: url("./fonts/space-grotesk/SpaceGrotesk-Variable.ttf") format("truetype");
+  /* woff2 first (~49KB, brotli-compressed) for the render-critical hero display
+   * face; the raw .ttf (~137KB) stays as a fallback for engines without woff2.
+   * The .ttf is ALSO the file the next/og Satori pipeline reads directly via
+   * node:fs, so it must remain on disk — do not delete it. */
+  src:
+    url("./fonts/space-grotesk/SpaceGrotesk-Variable.woff2") format("woff2"),
+    url("./fonts/space-grotesk/SpaceGrotesk-Variable.ttf") format("truetype");
 }

@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: repoRoot,
   },
+  images: {
+    // Serve modern formats — next/image negotiates AVIF (smallest), then WebP,
+    // then the original JPG. Cuts the transformation/gallery/avatar payloads
+    // (the bulk of the page weight) well below the source JPGs for a better LCP.
+    formats: ["image/avif", "image/webp"],
+  },
 };
 
 export default nextConfig;
