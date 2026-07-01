@@ -2,10 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy, Heart } from "lucide-react"
 
 const DEFAULT_COLS = 12
 const PLACEHOLDER_TILES = 84
+const DATING_APPS = [
+  { name: "HINGE", slug: "hinge" },
+  { name: "TINDER", slug: "tinder" },
+  { name: "BUMBLE", slug: "bumble" },
+  { name: "RAYA", slug: "raya" },
+  { name: "CMB", slug: "cmb" },
+]
+const APP_ROTATE_MS = 2600
 
 function getColumnCount() {
   if (typeof window === "undefined") return DEFAULT_COLS
@@ -28,6 +36,7 @@ export function WishmaxLanding() {
   const [linkCopied, setLinkCopied] = useState(false)
   const [colsCount, setColsCount] = useState(DEFAULT_COLS)
   const [layoutVersion, setLayoutVersion] = useState(0)
+  const [appIndex, setAppIndex] = useState(0)
 
   const countRef = useRef(0)
   const animationRef = useRef<number | null>(null)
@@ -107,6 +116,16 @@ export function WishmaxLanding() {
     apply()
     window.addEventListener("resize", apply)
     return () => window.removeEventListener("resize", apply)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return
+    }
+    const id = setInterval(() => {
+      setAppIndex((current) => (current + 1) % DATING_APPS.length)
+    }, APP_ROTATE_MS)
+    return () => clearInterval(id)
   }, [])
 
   const columns = useMemo(() => {
@@ -234,26 +253,47 @@ export function WishmaxLanding() {
           <div className="copy-stack">
             <h1>
               <span className="desktop-title">
-                DATING PHOTOS
+                LARPMAXXING
                 <br />
-                WITHOUT THE
-                <br />
-                PHOTOSHOOT
+                ON{" "}
+                <span className="rotating-app" aria-live="polite">
+                  <span key={appIndex} className="rotating-app-word">
+                    <img
+                      className="app-icon"
+                      src={`/dating-apps/${DATING_APPS[appIndex].slug}.jpg`}
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    {DATING_APPS[appIndex].name}
+                  </span>
+                </span>
               </span>
               <span className="mobile-title">
-                DATING
+                LARPMAXXING
                 <br />
-                PHOTOS
-                <br />
-                WITHOUT THE
-                <br />
-                PHOTOSHOOT
+                ON{" "}
+                <span className="rotating-app" aria-live="polite">
+                  <span key={appIndex} className="rotating-app-word">
+                    <img
+                      className="app-icon"
+                      src={`/dating-apps/${DATING_APPS[appIndex].slug}.jpg`}
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    {DATING_APPS[appIndex].name}
+                  </span>
+                </span>
               </span>
             </h1>
             <p>
-              Upload your face. Pick the vibe. Get profile-ready shots built to make guys look sharper.
-              <span>{displayCount.toLocaleString()} people on the list.</span>
+              One selfie becomes any guy hot girls swipe on.<br />Way more matches, zero photoshoot.
             </p>
+            <div className="hero-stat">
+              <Heart className="hero-stat-heart" fill="currentColor" aria-hidden="true" />
+              <span>
+                <strong>{displayCount.toLocaleString()}</strong> new matches made and counting.
+              </span>
+            </div>
 
             <form onSubmit={onSubmit} className="waitlist-form">
               <input
@@ -288,7 +328,7 @@ export function WishmaxLanding() {
             <img src="/x.svg" alt="" aria-hidden="true" />
           </a>
         </div>
-        <div>© 2026 Bump Social Inc. All rights reserved.</div>
+        <div>© 2026 Wishmax Inc. All rights reserved.</div>
       </footer>
     </main>
   )

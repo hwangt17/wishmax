@@ -4,6 +4,8 @@
 :root {
   --color-midnight-ink: #000000;
   --color-pure-canvas: #ffffff;
+  --color-status-done: #31c431;
+  --color-hot-pink: #ff3d8b;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --text-body: 14px;
@@ -216,6 +218,36 @@ input {
   display: none;
 }
 
+.rotating-app-word {
+  animation: rotating-app-in 520ms ease;
+  white-space: nowrap;
+}
+
+.app-icon {
+  display: inline-block;
+  width: 0.78em;
+  height: 0.78em;
+  margin-right: 0.16em;
+  border-radius: var(--radius-images);
+  object-fit: cover;
+  vertical-align: -0.04em;
+}
+
+@keyframes rotating-app-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotating-app-word {
+    animation: none;
+  }
+}
+
 .copy-stack p,
 .success-panel > p {
   max-width: 560px;
@@ -227,11 +259,47 @@ input {
   line-height: 1.4;
 }
 
-.copy-stack p span {
-  display: block;
-  margin-top: var(--spacing-8);
-  color: rgba(255, 255, 255, 0.9);
+.hero-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-16);
+  color: var(--page-muted);
+  font-size: var(--text-body);
+  letter-spacing: var(--tracking-body);
+  line-height: 1.4;
   font-variant-numeric: tabular-nums;
+}
+
+.hero-stat strong {
+  color: var(--page-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.hero-stat-heart {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  flex-shrink: 0;
+  color: var(--color-hot-pink);
+  animation: hero-stat-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes hero-stat-pulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stat-heart {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 .waitlist-form {

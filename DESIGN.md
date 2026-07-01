@@ -55,6 +55,7 @@ Partiful's "Partiful Display Medium" and "TWK Lausanne Pan" are proprietary. Wis
 | Sky Periwinkle | `linear-gradient(rgba(150,196,255,0.1) 0%, #ffffff 100%)` | `--gradient-sky-periwinkle` | Feature-section background wash — faint blue tint dissolving to white. |
 | Spearmint | `linear-gradient(130deg, rgb(133,218,220) 0%, rgb(192,226,226) 100%)` | `--gradient-spearmint` | Decorative content-level gradient inside template/preview imagery. |
 | Midnight Blue | `#001666` | `--color-midnight-blue` | Deep brand accent inside decorative template designs. |
+| Hot Pink | `#ff3d8b` | `--color-hot-pink` | Match/like indicator **only** (e.g. the pulsing "matches made" heart) — a vivid romance accent reserved for the match motif, not general UI. |
 
 **Semantic colors — reserved for generation/job status only** (never decorative): Success/Done `#31c431` · Pending/Processing `#ffae00` · Failed `#ff0000`.
 
@@ -198,6 +199,7 @@ One source → both platforms. Keep these in sync with the tables above:
   --color-sky-periwinkle: #96c4ff;
   --color-spearmint: #85dadc;
   --color-midnight-blue: #001666;
+  --color-hot-pink: #ff3d8b;
   --color-status-done: #31c431;
   --color-status-processing: #ffae00;
   --color-status-failed: #ff0000;
