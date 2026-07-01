@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Heart } from "lucide-react"
+import { Heart, TrendingUp } from "lucide-react"
 
-const DEFAULT_COLS = 12
-const PLACEHOLDER_TILES = 84
+const DEFAULT_COLS = 10
+const PLACEHOLDER_TILES = 60
 const DATING_APPS = [
   { name: "HINGE", slug: "hinge" },
   { name: "TINDER", slug: "tinder" },
@@ -22,8 +22,8 @@ const DEVICE_SCREENSHOT: string | null = null
 
 function getColumnCount() {
   if (typeof window === "undefined") return DEFAULT_COLS
-  if (window.innerWidth < 640) return 6
-  if (window.innerWidth < 1024) return 8
+  if (window.innerWidth < 640) return 5
+  if (window.innerWidth < 1024) return 7
   return DEFAULT_COLS
 }
 
@@ -155,7 +155,10 @@ export function WishmaxLanding() {
                   <div key={`${tile}-${tileIndex}`} className="blank-photo-tile">
                     <div className="tile-flip">
                       <div className="tile-face tile-face-after">
-                        <span className="tile-label">+{matchBoost(tile)}% matches</span>
+                        <span className="tile-label">
+                          <TrendingUp className="tile-gain-icon" aria-hidden="true" />
+                          +{matchBoost(tile)}% likes
+                        </span>
                       </div>
                       <div className="tile-face tile-face-before">
                         <span className="tile-label">original</span>
@@ -220,7 +223,7 @@ export function WishmaxLanding() {
           <div className="hero-stat">
             <Heart className="hero-stat-heart" fill="currentColor" aria-hidden="true" />
             <span>
-              <strong>{displayCount.toLocaleString()}</strong> new matches made and counting.
+              <strong>{displayCount.toLocaleString()}</strong> more likes received and counting.
             </span>
           </div>
 

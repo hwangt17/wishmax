@@ -6,6 +6,7 @@
   --color-pure-canvas: #ffffff;
   --color-status-done: #31c431;
   --color-hot-pink: #ff3d8b;
+  --color-match-gain: #31c431;
   --color-fog: #b3b3b3;
   --color-slate: #666666;
   /* CTA accent */
@@ -190,12 +191,24 @@ input {
 .tile-label {
   display: flex;
   align-items: flex-end;
+  gap: var(--spacing-4);
   padding: var(--spacing-8);
   color: rgba(0, 0, 0, 0.32);
   font-size: var(--text-label);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-body);
   text-transform: uppercase;
+}
+
+.tile-gain-icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  stroke-width: 2.5;
+}
+
+.tile-face-after .tile-label {
+  color: var(--color-match-gain);
 }
 
 .tile-face-before .tile-label {
