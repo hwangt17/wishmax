@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Check, Copy, Instagram, MessageCircle, Music2 } from "lucide-react"
+import { Check, Copy } from "lucide-react"
 
 const DEFAULT_COLS = 12
 const PLACEHOLDER_TILES = 84
@@ -279,13 +279,13 @@ export function WishmaxLanding() {
       <footer className="landing-footer">
         <div className="social-links" aria-label="Social links">
           <a href="https://www.instagram.com/" aria-label="Instagram">
-            <Instagram aria-hidden="true" />
+            <img src="/ig.svg" alt="" aria-hidden="true" />
           </a>
           <a href="https://www.tiktok.com/" aria-label="TikTok">
-            <Music2 aria-hidden="true" />
+            <img src="/tiktok.svg" alt="" aria-hidden="true" />
           </a>
-          <a href="mailto:hello@wishmax.app" aria-label="Contact">
-            <MessageCircle aria-hidden="true" />
+          <a href="https://x.com/" aria-label="X (Twitter)">
+            <img src="/x.svg" alt="" aria-hidden="true" />
           </a>
         </div>
         <div>© 2026 Bump Social Inc. All rights reserved.</div>

@@ -384,6 +384,11 @@ input {
   height: 18px;
 }
 
+.social-links img {
+  width: 20px;
+  height: 20px;
+}
+
 .share-note {
   margin-top: var(--spacing-16) !important;
 }
