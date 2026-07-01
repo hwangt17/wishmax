@@ -14,6 +14,9 @@
 @import "tailwindcss";
 @import "../../design/fonts.css";
 @import "../../design/tokens.css";
+/* Site chrome (header, footer, nav, ported Button) — token-only, real
+ * pseudo-states. See ./components/chrome.css. */
+@import "./components/chrome.css";
 
 html,
 body {

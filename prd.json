@@ -33,8 +33,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Done 2026-07-01. Sticky <SiteHeader> (client, mobile menu toggle) + <SiteFooter> rendered in root layout around {children}. Header: Wishmax wordmark (Inter 700, not Space Grotesk <26px) + desktop nav (How it works / Examples / FAQ) + black 'Get my photos' CTA; collapses to a hamburger-toggled stacked menu ≤767px. Footer: brand+tagline and Product/Company/Social link columns (Privacy, Terms, Contact mailto, Instagram/TikTok/X placeholder hrefs) + legal strip. Ported the PRD-01 Button (+ new ButtonLink for anchor CTAs) and the .wm-btn CSS slice into web/app/components/chrome.css (token-only, real pseudo-states). Browser-verified across 390/768/1280: header position:sticky top:0 z:50 white bg, boxShadow none (DESIGN invariant), silver hairline border, stays pinned after 600px scroll; desktop nav shows ≥768px, hamburger ≤767px; mobile menu opens (aria-expanded), CTA black bg backgroundImage:none, closes on link click; 10 footer links present. Typecheck, lint, build all pass; token-literal audit clean."
     },
     {
       "id": "US-003",

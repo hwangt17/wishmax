@@ -30,3 +30,26 @@ token-literal audit before marking any UI story done:
 - [x] Browser-verified (Playwright + system Chrome): white body background,
       Space Grotesk 48px black H1, black CTA with `backgroundImage: none`
       (design invariant: no gradient on buttons), white CTA text, 8px radius.
+
+### US-002 — Global layout, nav & footer
+
+- [x] Sticky header in the root layout (renders on every page): wordmark +
+      primary "Get my photos" CTA. Verified `position: sticky`, `top: 0`,
+      `z-index: 50`, white bg, **`box-shadow: none`** (DESIGN: no shadow on
+      chrome), silver hairline bottom border; stays pinned (top `0`) after
+      scrolling 600px.
+- [x] Header CTA is the black-on-white Button (ported PRD-01 `.wm-btn`);
+      `backgroundImage: none` (no gradient on interactive elements).
+- [x] Footer with secondary links present: Privacy, Terms, Contact (mailto),
+      and social (Instagram/TikTok/X) — placeholder hrefs allowed. 10 links
+      total across Product/Company/Social columns; no shadow on footer.
+- [x] Responsive: desktop nav row shows ≥768px; hamburger shows ≤767px.
+      Verified the CSS swap at 390 / 768 / 1280.
+- [x] Mobile nav works: hamburger toggles a stacked menu (`aria-expanded`
+      flips, `aria-controls` set), links + full-width CTA present, closes on
+      link click. Keyboard-focusable controls (`:focus-visible` outlines).
+- [x] Token-only: token-literal audit on `web/app/components` + layout +
+      globals returns no hardcoded visual values.
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build`.

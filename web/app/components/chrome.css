@@ -1,0 +1,351 @@
+/*
+ * Site chrome — global header, footer, nav, and the ported Button.
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md (consumed via the tokens imported in
+ * globals.css). Every color, size, radius, spacing, weight, and shadow below is
+ * a var(--…) token — no literal hex / px / font values. Interactive states use
+ * real pseudo-classes (:hover / :active / :focus-visible), which is why chrome
+ * lives here rather than in inline styles.
+ *
+ * Non-visual literals only: 1px/2px hairline & focus-outline widths, opacity
+ * multipliers, unitless transforms, transition timing, spinner keyframes.
+ */
+
+/* ---------------------------------------------------------------- Buttons -- */
+/* Ported verbatim from design/showcase/src/components.css (.wm-btn slice) so
+ * the marketing site shares the exact design-system button. */
+
+.wm-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  font-family: var(--font-sans);
+  border-radius: var(--radius-buttons);
+  padding: var(--spacing-10) var(--spacing-24);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 120ms ease, background-color 120ms ease, color 120ms ease;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.wm-btn:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+/* Primary filled — black on white (the only action color). */
+.wm-btn--primary {
+  background-color: var(--color-midnight-ink);
+  color: var(--color-pure-canvas);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-bold);
+}
+
+/* On photo / hero surfaces the fill inverts to white-on-black. */
+.wm-btn--primary.wm-btn--on-photo {
+  background-color: var(--color-pure-canvas);
+  color: var(--color-midnight-ink);
+}
+
+.wm-btn--primary:hover:not(:disabled):not(.is-loading) {
+  opacity: 0.85;
+}
+
+.wm-btn--primary:active:not(:disabled):not(.is-loading) {
+  opacity: 0.7;
+}
+
+/* Ghost — transparent with a black hairline; secondary / header action. */
+.wm-btn--ghost {
+  background-color: transparent;
+  color: var(--color-midnight-ink);
+  border-color: var(--color-midnight-ink);
+  border-radius: var(--radius-navpills);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-w550);
+}
+
+/* Ghost hover/press fills black — stays inside the black & white system. */
+.wm-btn--ghost:hover:not(:disabled):not(.is-loading) {
+  background-color: var(--color-midnight-ink);
+  color: var(--color-pure-canvas);
+}
+
+.wm-btn--ghost:active:not(:disabled):not(.is-loading) {
+  background-color: var(--color-midnight-ink);
+  color: var(--color-pure-canvas);
+  opacity: 0.85;
+}
+
+/* Disabled — silver fill / fog label (per DESIGN.md disabled roles). */
+.wm-btn:disabled {
+  cursor: not-allowed;
+  background-color: var(--color-silver);
+  color: var(--color-fog);
+  border-color: transparent;
+  opacity: 1;
+}
+
+/* Loading — keep the black fill, swap the label for a spinner, hold the size. */
+.wm-btn.is-loading {
+  cursor: progress;
+}
+
+.wm-btn.is-loading .wm-btn__label {
+  visibility: hidden;
+}
+
+.wm-btn__spinner {
+  position: absolute;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  border-radius: var(--radius-full);
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: wm-spin 700ms linear infinite;
+}
+
+@keyframes wm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ----------------------------------------------------------------- Header -- */
+
+/* Pinned top nav — quiet white surface, hairline separator, no shadow
+ * (elevation is for cards/floating widgets only per DESIGN.md). */
+.wm-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--surface-canvas);
+  border-bottom: 1px solid var(--color-silver);
+}
+
+.wm-header__bar {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-12) var(--spacing-24);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+}
+
+/* Wordmark — Inter 700 (Space Grotesk is reserved for ≥26px display only). */
+.wm-wordmark {
+  font-family: var(--font-sans);
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  text-decoration: none;
+}
+
+.wm-wordmark:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-navpills);
+}
+
+/* Desktop nav — link row + CTA, right-aligned. */
+.wm-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-24);
+}
+
+.wm-nav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-24);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wm-nav__link {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  font-weight: var(--font-weight-w550);
+  color: var(--color-graphite);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.wm-nav__link:hover {
+  color: var(--color-midnight-ink);
+}
+
+.wm-nav__link:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-navpills);
+}
+
+/* Hamburger — mono-weight ink icon button (mobile only). */
+.wm-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-silver);
+  border-radius: var(--radius-buttons);
+  color: var(--color-midnight-ink);
+  cursor: pointer;
+}
+
+.wm-nav-toggle:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+/* Mobile menu panel — stacked links + CTA under the bar. */
+.wm-mobile-menu {
+  border-top: 1px solid var(--color-silver);
+  padding: var(--spacing-16) var(--spacing-24) var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+}
+
+.wm-mobile-menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wm-mobile-menu .wm-nav__link {
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+}
+
+.wm-mobile-menu .wm-btn {
+  width: 100%;
+}
+
+/* Responsive swap — hide the desktop nav, reveal the hamburger on mobile. */
+@media (max-width: 767px) {
+  .wm-nav {
+    display: none;
+  }
+
+  .wm-nav-toggle {
+    display: inline-flex;
+  }
+}
+
+/* ----------------------------------------------------------------- Footer -- */
+
+.wm-footer {
+  border-top: 1px solid var(--color-silver);
+  background-color: var(--surface-canvas);
+}
+
+.wm-footer__inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-60) var(--spacing-24) var(--spacing-40);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-40);
+  justify-content: space-between;
+}
+
+.wm-footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  max-width: 40ch;
+}
+
+.wm-footer__tagline {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--color-slate);
+  margin: 0;
+}
+
+.wm-footer__cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-60);
+}
+
+.wm-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.wm-footer__heading {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  line-height: var(--leading-label);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  color: var(--color-fog);
+  margin: 0;
+}
+
+.wm-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-10);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wm-footer__link {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--color-graphite);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.wm-footer__link:hover {
+  color: var(--color-midnight-ink);
+}
+
+.wm-footer__link:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-navpills);
+}
+
+.wm-footer__legal {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-20) var(--spacing-24);
+  border-top: 1px solid var(--color-silver);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-ash);
+}
