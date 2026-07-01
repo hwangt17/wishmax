@@ -214,3 +214,32 @@ token-literal audit before marking any UI story done:
       with 5 ink stars + quote + circular avatar + name + handle; cards
       `--shadow-sm` + 12px radius; avatars 40×40 full-radius): screenshots
       `/tmp/wm-us007-{mobile,tablet,desktop}.png`.
+
+### US-009 — FAQ section
+
+- [x] Accessible accordion FAQ (`web/app/components/Faq.tsx`, `id="faq"` — matches
+      the header/footer "FAQ" nav anchor) covering all five required objections:
+      is it really my face; photo privacy / data handling; how long it takes;
+      platforms (iOS/Android); and cost / cancellation.
+- [x] WAI-ARIA accordion pattern: each question is an `<h3><button
+      aria-expanded aria-controls>`; each answer is a `role="region"`
+      `aria-labelledby` panel that is `hidden` while collapsed (leaves the tab
+      order / skipped by AT). Verified `aria-controls` → panel id and
+      `aria-labelledby` → button id match; items open independently.
+- [x] Keyboard accessible: native `<button>` triggers — Tab focuses, Enter opens,
+      Space closes; verified `aria-expanded` and the panel `hidden` flag flip on
+      both keys.
+- [x] Copy is brand-voice, honest pre-launch where needed (pricing/platform
+      timing framed as "at launch"); no lorem ipsum.
+- [x] Cards follow the Standard Content Card spec (white surface, `--shadow-sm`,
+      12px radius); section on the white canvas (no gradient, `box-shadow: none`)
+      for rhythm against the SocialProof periwinkle wash above; title Inter 700
+      24px (NOT the display face); single readable column at every width.
+- [x] Token-only: token-literal audit on `Faq.tsx` + `faq.css` is CLEAN.
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build`.
+- [x] Browser-verified (Playwright + system Chrome) at 390 / 768 / 1280 (white
+      section, no shadow; Inter 24px title; 5 panels start hidden; click + Enter
+      open / Space closes; cards `--shadow-sm` + 12px radius): screenshots
+      `/tmp/wm-us009-{mobile,tablet,desktop}.png`.

@@ -127,8 +127,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 8,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Done 2026-07-01. FAQ section (web/app/components/Faq.tsx + faq.css, rendered by page.tsx after SocialProof, id='faq' matching the header/footer 'FAQ' nav anchor). Accessible accordion following the WAI-ARIA pattern: each question is an <h3><button aria-expanded aria-controls>; each answer is a role='region' aria-labelledby panel that is `hidden` while collapsed (leaves the tab order + skipped by AT). Five items cover ALL required objections: 'Is it really my face?', 'What happens to my photos and data?' (privacy/data handling), 'How long does it take?', 'What platforms is Wishmax on?' (iOS/Android), 'What does it cost, and can I cancel?' (cost/cancellation). Keyboard accessible via native <button> triggers (Tab focuses, Enter opens, Space closes — verified aria-expanded + panel hidden flip on both keys); items open independently (Set<number> state in a 'use client' component, useId for stable ids). Copy is brand-voice, honest pre-launch (pricing/platform timing framed 'at launch'), no lorem ipsum. Each item is a DESIGN.md Standard Content Card (white surface, --shadow-sm, radius-cards 12px) with a full-width trigger and a filled mono INK chevron that rotates 180deg on open; section on the white canvas (no gradient, box-shadow none) for rhythm against the SocialProof periwinkle wash above; single readable column (max 72ch) at every width; title Inter 700 24px (not the display face); reuses the eyebrow-Badge + Inter-700-title + slate-lede section header. Typecheck, lint, build all pass; token-literal audit CLEAN. Browser-verified 390/768/1280 (white section no shadow, Inter 24px title, 5 panels start hidden, aria-controls/aria-labelledby wired, click+Enter open / Space close, independent open, cards --shadow-sm/12px)."
     },
     {
       "id": "US-010",
