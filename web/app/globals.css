@@ -38,6 +38,7 @@
   --spacing-40: 40px;
   --spacing-60: 60px;
   --spacing-80: 80px;
+  --text-caption: 11px;
   --text-label: 12px;
   --surface-tint-soft: rgba(0, 0, 0, 0.05);
   --surface-tint-strong: rgba(0, 0, 0, 0.2);
@@ -866,6 +867,14 @@ input {
 
   .marquee {
     gap: var(--spacing-8);
+  }
+
+  /* Smaller tiles on mobile — tighten the gain chip so it fits the card */
+  .tile-label {
+    left: var(--spacing-6);
+    bottom: var(--spacing-6);
+    padding: var(--spacing-4) var(--spacing-6);
+    font-size: var(--text-caption);
   }
 
   .copy-stack p,
