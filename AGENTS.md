@@ -94,3 +94,31 @@ The token sources themselves (`design/theme.ts`) typecheck standalone via
 `cd design && npx -y -p typescript@latest tsc -p tsconfig.json`.
 
 Node v25 / npm 11; no global `tsc` (use the local devDependency or `npx`).
+
+### Stack — landing page / marketing website (PRD-02)
+
+The product marketing site lives at **`web/`** — Next.js 16 (App Router,
+Turbopack) + React 19 + TypeScript + Tailwind v4. It **consumes** the PRD-01
+design system directly (no copies): `web/app/globals.css` `@import`s
+`../../design/tokens.css` (the `@theme` block → single source of truth for all
+visual values) and `../../design/fonts.css` (self-hosted Inter + Space Grotesk).
+`next.config.ts` sets `turbopack.root` to the repo root so those parent-dir
+imports resolve and the `design/fonts/*` url()s bundle.
+
+| Concern | Command (run from `web/`) |
+|---|---|
+| Install | `npm install` |
+| Dev server | `npm run dev` → http://localhost:3100 |
+| Build | `npm run build` |
+| Start (prod) | `npm run start` → http://localhost:3100 |
+| Typecheck | `npm run typecheck` (`tsc --noEmit`) |
+| Lint | `npm run lint` (`eslint .` — flat config from `eslint-config-next/core-web-vitals` + `/typescript`; do NOT use `next lint`, removed in Next 16) |
+| Test | none yet |
+| Env vars | none yet (waitlist store seam lands in US-010) |
+| Deploy | TBD (Vercel-style static/SSR target) |
+
+Sharing mechanism decision (US-001): **direct relative `@import` of the shared
+`design/` files, not copy or a published package.** Keeps one source of truth;
+Turbopack root = repo root makes it work. When porting a PRD-01 component into
+`web/`, bring the component + its slice of `design/showcase/src/components.css`
+and rely on the already-wired token/font imports (do not re-copy tokens/fonts).

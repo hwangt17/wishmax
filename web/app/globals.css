@@ -1,0 +1,35 @@
+/*
+ * Wishmax web — global stylesheet.
+ *
+ * Tailwind v4 is wired to consume the PRD-01 design system. The two design
+ * imports are the SINGLE SOURCE OF TRUTH (../../design/, shared with the app
+ * and the showcase) — no visual values are defined in the web app:
+ *   - fonts.css   → @font-face for "Inter" + "Space Grotesk" (self-hosted,
+ *                   url()s resolve to ../../design/fonts/*, bundled by Turbopack)
+ *   - tokens.css  → the @theme block (colors, type, spacing, radius, shadows),
+ *                   which merges into Tailwind's theme so every token is both a
+ *                   CSS custom property (var(--…)) and a generated utility.
+ * Source of truth for all values is ../../DESIGN.md. Never hardcode here.
+ */
+@import "tailwindcss";
+@import "../../design/fonts.css";
+@import "../../design/tokens.css";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface-canvas);
+  color: var(--color-midnight-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

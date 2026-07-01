@@ -1,0 +1,28 @@
+{
+  "name": "@wishmax/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Wishmax landing page (marketing website). Next.js App Router + TypeScript + Tailwind v4, consuming the PRD-01 design tokens from design/tokens.css.",
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "next": "^16.2.9",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "^16.2.9",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.7.0"
+  }
+}

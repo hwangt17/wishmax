@@ -23,7 +23,7 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 - [ ] Next.js (App Router) + TypeScript project created in a clear web directory.
 - [ ] Tailwind configured to consume the exported design tokens from PRD-01 (colors, type, spacing, radius).
 - [ ] Brand fonts loaded and applied.
-- [ ] Base layout renders a tokenized page (dark-first) with no default-framework styling left over.
+- [ ] Base layout renders a tokenized page (light / white-canvas per `DESIGN.md`) with no default-framework styling left over.
 - [ ] Typecheck/lint passes.
 - [ ] Verify in browser using dev-browser skill.
 
@@ -31,7 +31,7 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 **Description:** As a visitor, I want consistent header/footer navigation so I can orient and find the CTA anywhere.
 
 **Acceptance Criteria:**
-- [ ] Sticky/handsome header with logo/wordmark and a primary CTA button.
+- [ ] Sticky header with logo/wordmark and a primary CTA button; header uses design tokens (no hardcoded values) and stays pinned on scroll.
 - [ ] Footer with secondary links (privacy, terms, contact, social) — placeholder hrefs allowed but present.
 - [ ] Fully responsive (mobile, tablet, desktop); mobile nav works.
 - [ ] Typecheck/lint passes.
@@ -73,7 +73,7 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 
 **Acceptance Criteria:**
 - [ ] A benefits section that maps concrete pain points (bad lighting, no good photos, expensive photographers, low matches) to Wishmax outcomes.
-- [ ] Copy is specific and confident — no filler, aligned to the brand voice from PRD-01.
+- [ ] Copy is specific and confident, aligned to the brand voice from PRD-01; no lorem ipsum or placeholder filler text, and each benefit maps to one of the named pain points (bad lighting, no good photos, expensive photographers, low matches).
 - [ ] Typecheck/lint passes.
 - [ ] Verify in browser using dev-browser skill.
 
@@ -82,14 +82,16 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 
 **Acceptance Criteria:**
 - [ ] A testimonial/social-proof section with a content structure ready for real quotes/metrics (clearly-labeled placeholders allowed pre-launch).
-- [ ] Visually credible (avatars, names/handles, optional star/metric), not slop.
+- [ ] Visually credible (avatars, names/handles, optional star/metric) using real photography via next/image and design tokens; no lorem ipsum and no generic stock imagery.
 - [ ] Typecheck/lint passes.
 - [ ] Verify in browser using dev-browser skill.
 
-### US-008: Pricing / offer teaser
+### US-008: Pricing / offer teaser — DEFERRED (out of scope for v1)
+**Status:** Deferred by product decision (2026-07-01). No pricing teaser ships in v1 — the page converts on value alone. Kept here (not renumbered) for traceability; revisit once pricing is finalized.
+
 **Description:** As a visitor, I want to understand what it costs so I can decide to convert.
 
-**Acceptance Criteria:**
+**Acceptance Criteria (deferred — do not build in v1):**
 - [ ] A pricing teaser communicating the offer model (subscription/credits) at a high level, consistent with the app paywall direction.
 - [ ] Clear CTA from this section.
 - [ ] Copy avoids committing to exact numbers if not finalized (uses a documented placeholder).
@@ -109,9 +111,10 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 **Description:** As a visitor, I want one obvious next step so I can install or get notified.
 
 **Acceptance Criteria:**
-- [ ] Primary CTA points to App Store / TestFlight when available; pre-launch it captures an email for the waitlist.
-- [ ] Waitlist submissions persist (e.g. a Next.js route handler writing to a provider/db) with validation and success/error states.
-- [ ] No secrets exposed client-side; submission is rate-limited or spam-guarded.
+- [ ] Pre-launch (current state), the primary CTA captures an email for the waitlist; the CTA target is structured so it can later be swapped to an App Store / TestFlight link without re-architecting.
+- [ ] Waitlist submissions persist via a Next.js route handler behind a thin store abstraction (single `saveWaitlistEmail` seam). v1 may use a documented placeholder store; the real provider (email list vs hosted DB) is wired before launch without touching callers.
+- [ ] Validation and success/error states handled.
+- [ ] No secrets exposed client-side; submission has a concrete spam guard (per-IP rate limit on the route handler and/or a hidden honeypot field), verified to reject rapid/bot submissions.
 - [ ] Typecheck/lint passes.
 - [ ] Verify in browser using dev-browser skill.
 
@@ -123,6 +126,7 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 - [ ] A designed OG image renders for link shares.
 - [ ] `sitemap.xml` and `robots.txt` present.
 - [ ] Semantic headings and alt text on imagery.
+- [ ] Metadata and OG image verified to render (via view-source and an OG/Twitter card preview/debugger).
 - [ ] Typecheck/lint passes.
 
 ### US-012: Analytics & conversion tracking
@@ -130,7 +134,7 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 
 **Acceptance Criteria:**
 - [ ] A privacy-conscious analytics tool integrated.
-- [ ] Primary CTA clicks and waitlist submissions fire tracked events.
+- [ ] Primary CTA clicks and waitlist submissions fire tracked events, verified in the browser network/console (or the analytics debug view) to confirm the event payload.
 - [ ] No analytics in development noise / respects basic consent expectations.
 - [ ] Typecheck/lint passes.
 
@@ -160,11 +164,12 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 - No in-browser photo generation or app functionality — the site markets the app.
 - No multi-language/localization in this phase.
 - No A/B testing framework (single best-effort page first).
+- No pricing teaser / pricing section in v1 (US-008 deferred until pricing is finalized).
 
 ## Design Considerations
 
 - Reuse PRD-01 tokens and the feed-tile / before-after components so the site previews the app's actual look.
-- Dark-first, photo-forward, generous whitespace; restraint over decoration to read premium.
+- Light / white-canvas (per `DESIGN.md`), photo-forward, generous whitespace; the page stays quiet and bright while curated photography and gradient washes carry the energy. Restraint over decoration to read premium.
 - Copy carries the brand voice from PRD-01 — confident, specific, a little edgy, never generic.
 
 ## Technical Considerations
@@ -176,13 +181,23 @@ The site is built with **Next.js + TypeScript + Tailwind**, consuming the shared
 
 ## Success Metrics
 
-- Visitor-to-CTA-click and CTA-to-conversion (install/waitlist) rates are tracked from day one.
+**Build-time acceptance (verifiable at ship):**
 - Lighthouse mobile performance ≥ 90 (or a documented, justified gap).
+- Analytics events for CTA clicks and waitlist submissions are wired and confirmed firing.
 - Page communicates the hook in a 5-second test (informal review passes).
+
+**Post-launch KPIs (measured on live traffic, not a build gate):**
+- Visitor-to-CTA-click rate is tracked from day one.
+- CTA-to-conversion (install/waitlist) rate is tracked from day one.
+
+## Resolved Decisions (2026-07-01)
+
+- **CTA path:** Pre-launch **waitlist** is the build-time conversion action; CTA is structured to swap to an App Store / TestFlight link at launch. (US-010)
+- **Waitlist persistence:** Decided later — build US-010 behind a thin `saveWaitlistEmail` store abstraction with a documented placeholder store; wire the real provider (email list vs hosted DB) before launch. (US-010)
+- **Pricing:** No pricing teaser in v1 — **US-008 deferred**; page converts on value alone. (US-008, Non-Goals)
 
 ## Open Questions
 
-- Pre-launch waitlist vs. live App Store link — which is true at build time, and what persistence provider do we use?
-- Final pricing to show, or keep a placeholder?
 - Domain, legal pages (privacy/terms) ownership and content — who provides copy?
 - Do we want a short product demo video in the hero, or stills only for v1?
+- Which concrete waitlist provider (and is it an email list or hosted DB) do we commit to before launch? — deferred, not blocking v1 build.

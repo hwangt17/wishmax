@@ -1,0 +1,198 @@
+{
+  "project": "Wishmax",
+  "branchName": "ralph/landing-page",
+  "description": "Wishmax Landing Page (Marketing Website) - Next.js + TypeScript + Tailwind marketing site that communicates the hook, proves results with real before/after transformations, and converts visitors into waitlist signups (swappable to App Store install at launch). Consumes PRD-01 design tokens.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Next.js + Tailwind project scaffold with design tokens",
+      "description": "As a developer, I want the web project scaffolded and wired to the design system so all pages start on-brand.",
+      "acceptanceCriteria": [
+        "Next.js (App Router) + TypeScript project created in a clear web directory",
+        "Tailwind configured to consume the exported PRD-01 design tokens (colors, type, spacing, radius) from design/tokens.css — no hardcoded visual values",
+        "Brand fonts loaded and applied",
+        "Base layout renders a tokenized light / white-canvas page per DESIGN.md with no default-framework boilerplate styling left over",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Done 2026-07-01. Next.js 16 (App Router, Turbopack) + React 19 + TS + Tailwind v4 scaffolded at web/. globals.css @imports ../../design/fonts.css + ../../design/tokens.css (single source of truth, no token copies); Turbopack root set to repo root so the parent-dir imports resolve. Fonts verified loaded (document.fonts.check Inter + Space Grotesk = true). Typecheck, eslint, next build all pass. Browser-verified: white canvas, Space Grotesk 48px black H1, black CTA (backgroundImage:none), no boilerplate."
+    },
+    {
+      "id": "US-002",
+      "title": "Global layout, nav & footer",
+      "description": "As a visitor, I want consistent header/footer navigation so I can orient and find the CTA anywhere.",
+      "acceptanceCriteria": [
+        "Sticky header with logo/wordmark and a primary CTA button; header stays pinned on scroll and uses design tokens (no hardcoded values)",
+        "Footer with secondary links (privacy, terms, contact, social) — placeholder hrefs allowed but present",
+        "Fully responsive across mobile, tablet, desktop; mobile nav works",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Hero section with hook + before/after visual",
+      "description": "As a visitor, I want to instantly understand the value via a strong headline and a real transformation visual.",
+      "acceptanceCriteria": [
+        "Headline communicates the core hook plus a supporting subhead naming the pain (your photos cost you matches) and the promise (pro dating photos from your own face, no photoshoot)",
+        "Primary CTA is above the fold",
+        "A before/after transformation visual using the PRD-01 before/after pattern (not generic stock)",
+        "Looks great on mobile first; no layout shift on load (LCP image reserved/preloaded)",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "\"How it works\" section (3 steps)",
+      "description": "As a visitor, I want to see how simple it is so I trust I can get a result fast.",
+      "acceptanceCriteria": [
+        "Three clear steps (e.g. 1. Upload a few selfies, 2. Pick photos you love, 3. Get profile-ready shots)",
+        "Each step has an icon/visual and one tight sentence",
+        "Responsive layout using design tokens",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Transformation gallery / sample feed showcase",
+      "description": "As a visitor, I want to browse example results so I believe the quality and see the variety.",
+      "acceptanceCriteria": [
+        "A gallery of curated example transformations using the feed-tile component, mirroring the app's feed feel",
+        "Optional category framing (e.g. travel, gym, professional, night-out) to show range",
+        "Images optimized via next/image and lazy-loaded; no jank on scroll",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Benefits / pain-point section",
+      "description": "As a visitor, I want the value spelled out against my real frustrations so I feel understood.",
+      "acceptanceCriteria": [
+        "A benefits section mapping concrete pain points (bad lighting, no good photos, expensive photographers, low matches) to Wishmax outcomes",
+        "Copy is specific and confident in the PRD-01 brand voice; no lorem ipsum or placeholder filler; each benefit maps to one named pain point",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Social proof section",
+      "description": "As a visitor, I want proof others got results so I trust it works.",
+      "acceptanceCriteria": [
+        "A testimonial/social-proof section with a content structure ready for real quotes/metrics (clearly-labeled placeholders allowed pre-launch)",
+        "Visually credible (avatars, names/handles, optional star/metric) using real photography via next/image and design tokens; no lorem ipsum and no generic stock imagery",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "FAQ section",
+      "description": "As a visitor, I want common objections answered so I feel safe converting.",
+      "acceptanceCriteria": [
+        "Accessible accordion FAQ covering: is it really my face, photo privacy/data handling, how long it takes, platforms (iOS/Android), and cost/cancellation",
+        "Keyboard accessible and responsive",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Primary CTA + waitlist email capture",
+      "description": "As a visitor, I want one obvious next step so I can install or get notified.",
+      "acceptanceCriteria": [
+        "Pre-launch, the primary CTA captures an email for the waitlist; the CTA target is structured to later swap to an App Store / TestFlight link without re-architecting",
+        "Waitlist submissions persist via a Next.js route handler behind a thin store abstraction (single saveWaitlistEmail seam); v1 may use a documented placeholder store swappable to the real provider without touching callers",
+        "Validation and success/error states handled",
+        "No secrets exposed client-side; submission has a concrete spam guard (per-IP rate limit on the route handler and/or hidden honeypot field), verified to reject rapid/bot submissions",
+        "Typecheck passes",
+        "Lint passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "SEO, metadata & Open Graph",
+      "description": "As a growth owner, I want strong SEO and share previews so the page ranks and looks good when shared.",
+      "acceptanceCriteria": [
+        "Title, meta description, canonical, and OG/Twitter card metadata set",
+        "A designed OG image renders for link shares",
+        "sitemap.xml and robots.txt present",
+        "Semantic headings and alt text on all imagery",
+        "Metadata and OG image verified to render (via view-source and an OG/Twitter card preview/debugger)",
+        "Typecheck passes",
+        "Lint passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Analytics & conversion tracking",
+      "description": "As a growth owner, I want to measure traffic and conversions so I can improve the page.",
+      "acceptanceCriteria": [
+        "A privacy-conscious analytics tool integrated",
+        "Primary CTA clicks and waitlist submissions fire tracked events, verified in the browser network/console (or analytics debug view) to confirm the event payload",
+        "No analytics noise in development; respects basic consent expectations",
+        "Typecheck passes",
+        "Lint passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Responsive & performance pass",
+      "description": "As a visitor on any device, I want a fast, polished page so I don't bounce.",
+      "acceptanceCriteria": [
+        "Mobile, tablet, desktop layouts verified; no overflow or broken sections",
+        "Images optimized; good LCP and minimal layout shift",
+        "Lighthouse performance and best-practices scores recorded in progress.txt with target >= 90 on mobile (or documented gap)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill across breakpoints"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}

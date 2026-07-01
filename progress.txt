@@ -1,0 +1,82 @@
+# Ralph Progress Log
+
+Started: 2026-07-01
+Active PRD: PRD-02 Landing Page (tasks/prd-landing-page.md) — branch ralph/landing-page
+Previous run archived to archive/2026-07-01-design-system/ (PRD-01 Design System, complete)
+Depends on PRD-01: consumes design/tokens.css + design/fonts.css + the design/showcase component patterns.
+
+## Codebase Patterns
+
+### Design system (carried forward from PRD-01 — non-negotiable)
+- DESIGN.md (repo root) is the visual source of truth; read it before ANY UI work, every Ralph loop. Consume tokens, never hardcode color/type/spacing/radius/shadow. Web = design/tokens.css (Tailwind v4 @theme, use var(--token)); RN = design/theme.ts. Add missing values to DESIGN.md + both token files FIRST, then consume. Enforced in CLAUDE.md + AGENTS.md + the checklist.md reviewer gate — reject any change that hardcodes a visual value or diverges from DESIGN.md.
+- Brand fonts are self-hosted under design/fonts/ (inter/, space-grotesk/, licenses). Web loads them via design/fonts.css (@font-face families "Inter" + "Space Grotesk"), which must be imported so the --font-* tokens resolve. NEVER hardcode a font family — the @font-face name IS the --font-display / --font-sans token value.
+- Design invariants (verified against Partiful source, HOLDS TRUE): black/white action system (no colored buttons); gradients live on surfaces/overlays ONLY, never on buttons/interactive elements (verify CTA computed backgroundImage:none); max two type sizes per card; Space Grotesk display face only for hero headlines / largest titles (≥26px) — oversized numerals use Inter, not the display face; Warm Sand (#d9c58b) only for active states; status colors only on generation-state Badge dots, never decorative; selection = 2px midnight-ink outline ring (no reflow) or border-color swap; labels over photos = Badge `onPhoto` + --gradient-scrim overlay.
+- Token-literal audit before marking any UI story done: `grep -rnE '#[0-9a-fA-F]{3,8}|font-family.*(inter|space|sans-serif)|font-size:.*px' <component/css files>`. Only allowed literals: 1px/2px border & focus-outline widths, opacity multipliers, transforms, transition timing, @keyframes. Everything visual else must be a token.
+
+### Reusable components (built in PRD-01, live in design/showcase/src/components/)
+- Available: Button (primary/ghost, onPhoto, loading), Chip/ChipGroup, Badge (soft/strong/onPhoto/status-dot), FeedPhotoTile (THE hero feed tile), BeforeAfterCard, Card, Sheet (modal/sheet overlay). PRD-02 US-003 (before/after) and US-005 (feed gallery) should reuse these patterns.
+- These components are coupled to design/showcase/src/components.css (a token-only CSS file with real :hover/:active/:disabled pseudo-classes; inline styles can't express pseudo-states). Bringing a component into the Next.js site means porting the component + its slice of components.css, and importing design/tokens.css + design/fonts.css — decide the sharing mechanism in US-001 (copy vs shared package) and record it here.
+- Photo components (FeedPhotoTile, BeforeAfterCard) take a REAL `src` (full-bleed <img object-fit:cover>). The showcase used gradient-token `placeholder` stand-ins because it has no licensed photos — but the LANDING PAGE requires real before/after photography and real testimonial avatars via next/image (US-003/005/007 forbid generic stock). Source real imagery; do not ship gradient placeholders as the hero proof.
+- The Paywall component is APP-ONLY (app monetization) — it exists in the design system for PRD-03 but must NOT appear on the marketing website. (Aligns with US-008 pricing teaser being deferred/out of scope for v1.)
+
+### Tooling (carried forward)
+- Tailwind v4 consumes external tokens via `@import "../../tokens.css"` AFTER `@import "tailwindcss"` in the entry CSS — the @theme block merges into Tailwind's theme, no tailwind.config needed. Apply the same wiring in the Next.js app's global CSS (adjust the relative path to design/tokens.css + design/fonts.css).
+- Node v25 / npm 11; no global tsc — use the local devDependency or npx. Tokens typecheck standalone: `cd design && npx -y -p typescript@latest tsc -p tsconfig.json`.
+- No project-local browser: verify UI with a temp Playwright install (`cd /tmp && npm i playwright@1.58`) driving system Chrome (`chromium.launch({ channel: 'chrome' })`); screenshot the dev URL. Verify webfonts programmatically: after `document.fonts.ready`, check `document.fonts.check('14px Inter')` / `document.fonts.check('36px "Space Grotesk"')` and `[...document.fonts].map(f=>f.status)` ('loaded' vs 'error') — don't just eyeball the screenshot.
+- design/showcase/ (Vite + React + TS + Tailwind v4) is the design-system runtime — NOT a product app. The landing site (US-001) is a NEW Next.js App Router project in its own clear web directory; add its install/dev/build/typecheck/lint/deploy commands + env vars to AGENTS.md's Unknown Stack section as the stack solidifies.
+
+### Landing site (web/) — established US-001
+- The marketing site is a Next.js 16 App Router + React 19 + TS + Tailwind v4 project at `web/`. Sharing mechanism for the design system is **direct relative `@import`, NOT copy/package**: `web/app/globals.css` does `@import "tailwindcss"; @import "../../design/fonts.css"; @import "../../design/tokens.css";`. This keeps `design/` the single source of truth — never copy token values into `web/`.
+- CRITICAL wiring: `web/next.config.ts` sets `turbopack.root` to the repo root (one level up from `web/`). Without it, Turbopack won't resolve the parent-dir `../../design/*` CSS imports or bundle the `design/fonts/*` url()s. Keep it.
+- Consume tokens in web components via `var(--token)` inline styles OR Tailwind utilities generated from the `@theme` block. Inline `var()` is clean and unambiguous and passes the token-literal audit — prefer it for one-off page styling; port `components.css` classes when bringing over PRD-01 components (pseudo-states need real CSS).
+- Web quality gate: `cd web && npm run typecheck && npm run lint && npm run build`. Lint uses ESLint flat config importing `eslint-config-next/core-web-vitals` + `/typescript` directly — `next lint` is REMOVED in Next 16, and `FlatCompat` + eslint-config-next crashes on ESLint 9.39 ("circular structure to JSON"), so use the native flat exports.
+- Browser verify: `cd web && npm run dev` (port 3100), then drive with the temp Playwright/system-Chrome pattern. Verify webfonts programmatically after `document.fonts.ready`: `document.fonts.check('14px Inter')` + `document.fonts.check('36px "Space Grotesk"')`. Note: Next dev injects `__nextjs-Geist*` faces for its error overlay — they report `unloaded` and are NOT applied to the page; ignore them.
+
+### Ralph workflow
+- Use prd.json as execution state and progress.txt as persistent agent memory. Implement exactly one incomplete user story per Ralph loop invocation.
+- After meaningful work: update this file, checklist.md, and PRDS.md (status), and add browser evidence for UI stories.
+
+## Story Status (from prd.json)
+- US-001 Next.js + Tailwind scaffold with design tokens — passes: true (web/ scaffolded, tokens+fonts wired, all checks green)
+- US-002 Global layout, nav & footer — passes: false
+- US-003 Hero section with hook + before/after visual — passes: false
+- US-004 "How it works" section (3 steps) — passes: false
+- US-005 Transformation gallery / sample feed showcase — passes: false
+- US-006 Benefits / pain-point section — passes: false
+- US-007 Social proof section — passes: false
+- US-009 FAQ section — passes: false
+- US-010 Primary CTA + waitlist email capture — passes: false
+- US-011 SEO, metadata & Open Graph — passes: false
+- US-012 Analytics & conversion tracking — passes: false
+- US-013 Responsive & performance pass — passes: false
+
+(US-008 Pricing teaser is DEFERRED / out of scope for v1 per the PRD and the app-only Paywall decision; intentionally not in prd.json. IDs are not renumbered, to preserve traceability.)
+
+## Open Questions carried from the PRD
+- Domain + legal pages (privacy/terms) ownership and copy — who provides?
+- Hero: short product demo video vs stills-only for v1?
+- Concrete waitlist provider (email list vs hosted DB) — deferred, not blocking v1; US-010 builds behind a `saveWaitlistEmail` seam with a documented placeholder store.
+
+---
+<!-- Append dated work entries below this line, format:
+## [YYYY-MM-DD HH:MM] - [Story ID]
+- Implemented:
+- Files changed:
+- Checks run:
+- Browser evidence:
+- Learnings for future iterations:
+  - ...
+---
+-->
+
+## [2026-07-01 15:40] - US-001
+- Implemented: Next.js 16 (App Router, Turbopack) + React 19 + TypeScript + Tailwind v4 landing-site scaffold at `web/`, wired to the PRD-01 design system. `web/app/globals.css` imports Tailwind + `../../design/fonts.css` + `../../design/tokens.css` (single source of truth — no token copies); `next.config.ts` sets `turbopack.root` to the repo root so the parent-dir imports resolve. Root layout renders a tokenized white-canvas page (Space Grotesk display H1, Inter body, black-on-white CTA) with no Next boilerplate styling. Sharing mechanism decided: direct relative `@import` (recorded in AGENTS.md + Codebase Patterns).
+- Files changed: web/package.json, web/tsconfig.json (Next auto-tuned jsx/include), web/next.config.ts, web/postcss.config.mjs, web/eslint.config.mjs, web/.gitignore, web/app/globals.css, web/app/layout.tsx, web/app/page.tsx; AGENTS.md (web stack + commands), PRDS.md (PRD-02 → In Progress), checklist.md (new), prd.json (US-001 passes: true), progress.txt.
+- Checks run: `npm run typecheck` → no errors; `npm run lint` (eslint flat config) → exit 0; `npm run build` → compiled + 3 static pages generated, success. Token-literal audit on web/app → no hardcoded visual values.
+- Browser evidence: Playwright + system Chrome at http://localhost:3100. After `document.fonts.ready`: `document.fonts.check('14px Inter')` = true, `document.fonts.check('36px "Space Grotesk"')` = true; both faces report `loaded`. Computed styles: body background rgb(255,255,255) (white canvas); H1 fontFamily "Space Grotesk", 48px, rgb(0,0,0); CTA backgroundColor rgb(0,0,0), backgroundImage `none` (design invariant — no gradient on buttons), color rgb(255,255,255), borderRadius 8px. Screenshots: /tmp/wishmax-mobile.png (390px) + /tmp/wishmax-desktop.png (1280px) — clean, on-brand, no framework boilerplate.
+- Learnings for future iterations:
+  - Turbopack root MUST be the repo root for `web/` to import the shared `design/*` CSS from the parent dir and bundle the self-hosted fonts — see Codebase Patterns.
+  - `next lint` is removed in Next 16; use ESLint's native flat config importing `eslint-config-next/core-web-vitals` + `/typescript`. `FlatCompat` + eslint-config-next throws "circular structure to JSON" on ESLint 9.39 — avoid the compat path.
+  - Next dev injects `__nextjs-Geist*` overlay fonts that report `unloaded`; they are not applied to the page — ignore them when auditing `document.fonts`.
+  - Prefer `var(--token)` inline styles for one-off page styling (unambiguous, passes the token audit); reserve `components.css` porting for the shared PRD-01 components that need real pseudo-state CSS.
+---
