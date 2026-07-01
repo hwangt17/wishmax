@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Check, Copy, Heart } from "lucide-react"
+import { Heart } from "lucide-react"
 
 const DEFAULT_COLS = 12
 const PLACEHOLDER_TILES = 84
@@ -14,6 +14,11 @@ const DATING_APPS = [
   { name: "CMB", slug: "cmb" },
 ]
 const APP_ROTATE_MS = 2600
+// Point this at the App Store / Play Store listing when it's live.
+const APP_STORE_URL = "#"
+// Drop a before/after Hinge screenshot here (e.g. "/devices/hinge-before-after.png")
+// to replace the placeholder shown inside the phone.
+const DEVICE_SCREENSHOT: string | null = null
 
 function getColumnCount() {
   if (typeof window === "undefined") return DEFAULT_COLS
@@ -22,18 +27,17 @@ function getColumnCount() {
   return DEFAULT_COLS
 }
 
+// Deterministic per-tile "match boost" so each tile shows a different number
+// while server and client render the same value (no hydration mismatch).
+function matchBoost(seed: number) {
+  const noise = Math.sin(seed * 12.9898) * 43758.5453
+  const frac = noise - Math.floor(noise)
+  return Math.round(120 + frac * 400) // 120%–520%
+}
+
 export function WishmaxLanding() {
-  const [email, setEmail] = useState("")
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [waitlistPosition, setWaitlistPosition] = useState<number | null>(null)
-  const [totalCount, setTotalCount] = useState<number | null>(null)
-  const [isExistingUser, setIsExistingUser] = useState(false)
   const [displayCount, setDisplayCount] = useState(0)
   const [hasLoadedCount, setHasLoadedCount] = useState(false)
-  const [linkCopied, setLinkCopied] = useState(false)
   const [colsCount, setColsCount] = useState(DEFAULT_COLS)
   const [layoutVersion, setLayoutVersion] = useState(0)
   const [appIndex, setAppIndex] = useState(0)
@@ -136,53 +140,6 @@ export function WishmaxLanding() {
     return cols
   }, [colsCount])
 
-  const referralLink = useMemo(() => {
-    if (typeof window === "undefined") return "Loading..."
-    return `${window.location.origin}/`
-  }, [])
-
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmed = email.trim()
-    if (!trimmed) return
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setError("Please include a valid email address.")
-      return
-    }
-
-    setSubmitting(true)
-    setError(null)
-
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: trimmed }),
-      })
-      const json = await response.json()
-      if (!response.ok) throw new Error(json?.error || "Could not join the waitlist.")
-
-      setWaitlistPosition(typeof json.position === "number" ? json.position : null)
-      setTotalCount(typeof json.totalCount === "number" ? json.totalCount : null)
-      setIsExistingUser(Boolean(json.already))
-      if (typeof json.totalCount === "number") animateCount(json.totalCount)
-      setSubmitted(true)
-      setShowSuccess(true)
-      setTimeout(() => setSubmitted(false), 1000)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not join the waitlist.")
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  const copyReferralLink = async () => {
-    await navigator.clipboard.writeText(referralLink)
-    setLinkCopied(true)
-    setTimeout(() => setLinkCopied(false), 2000)
-  }
-
   return (
     <main className="landing-shell">
       <div className="collage-stage" aria-hidden="true">
@@ -196,7 +153,14 @@ export function WishmaxLanding() {
               <div className={columnIndex % 2 === 0 ? "marquee marquee-down" : "marquee marquee-up"}>
                 {[...column, ...column, ...column].map((tile, tileIndex) => (
                   <div key={`${tile}-${tileIndex}`} className="blank-photo-tile">
-                    <span />
+                    <div className="tile-flip">
+                      <div className="tile-face tile-face-after">
+                        <span className="tile-label">+{matchBoost(tile)}% matches</span>
+                      </div>
+                      <div className="tile-face tile-face-before">
+                        <span className="tile-label">original</span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -205,9 +169,8 @@ export function WishmaxLanding() {
         </div>
       </div>
 
-      {!showSuccess && <div className="desktop-scrim" aria-hidden="true" />}
-      {!showSuccess && <div className="mobile-scrim" aria-hidden="true" />}
-      {showSuccess && <div className="success-scrim" aria-hidden="true" />}
+      <div className="desktop-scrim" aria-hidden="true" />
+      <div className="mobile-scrim" aria-hidden="true" />
 
       <header className="topbar">
         <Link className="wordmark" href="/" aria-label="Wishmax home">
@@ -215,106 +178,99 @@ export function WishmaxLanding() {
         </Link>
       </header>
 
-      <section className="hero-content" aria-label="Wishmax waitlist">
-        {showSuccess ? (
-          <div className="success-panel">
-            <h1>
-              {isExistingUser
-                ? waitlistPosition
-                  ? <>YOU&apos;RE ALREADY<br />#{waitlistPosition.toLocaleString()}</>
-                  : "YOU'RE ALREADY"
-                : waitlistPosition
-                  ? <>YOU&apos;RE #{waitlistPosition.toLocaleString()}</>
-                  : "YOU'RE ON"}
+      <section className="hero-content" aria-label="Wishmax">
+        <div className="copy-stack">
+          <h1>
+            <span className="desktop-title">
+              LARPMAXXING
               <br />
-              ON THE LIST
-            </h1>
-            <p>
-              {totalCount
-                ? `You are on the waitlist with ${Math.max(totalCount - 1, 0).toLocaleString()} other guys waiting for launch.`
-                : "You are officially on the waitlist. Early access hits your inbox first."}
-            </p>
-
-            <div className="share-card">
-              <div>
-                <h2>SHARE WITH FRIENDS</h2>
-                <p>More signups means faster launch and better first templates.</p>
-              </div>
-              <div className="copy-row">
-                <span>{referralLink}</span>
-                <button type="button" onClick={copyReferralLink} aria-label="Copy waitlist link">
-                  {linkCopied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
-                </button>
-              </div>
-              <p className="share-note">Send it to the friend whose profile photos need intervention.</p>
-            </div>
-          </div>
-        ) : (
-          <div className="copy-stack">
-            <h1>
-              <span className="desktop-title">
-                LARPMAXXING
-                <br />
-                ON{" "}
-                <span className="rotating-app" aria-live="polite">
-                  <span key={appIndex} className="rotating-app-word">
-                    <img
-                      className="app-icon"
-                      src={`/dating-apps/${DATING_APPS[appIndex].slug}.jpg`}
-                      alt=""
-                      aria-hidden="true"
-                    />
-                    {DATING_APPS[appIndex].name}
-                  </span>
+              ON{" "}
+              <span className="rotating-app" aria-live="polite">
+                <span key={appIndex} className="rotating-app-word">
+                  <img
+                    className="app-icon"
+                    src={`/dating-apps/${DATING_APPS[appIndex].slug}.jpg`}
+                    alt=""
+                    aria-hidden="true"
+                  />
+                  {DATING_APPS[appIndex].name}
                 </span>
               </span>
-              <span className="mobile-title">
-                LARPMAXXING
-                <br />
-                ON{" "}
-                <span className="rotating-app" aria-live="polite">
-                  <span key={appIndex} className="rotating-app-word">
-                    <img
-                      className="app-icon"
-                      src={`/dating-apps/${DATING_APPS[appIndex].slug}.jpg`}
-                      alt=""
-                      aria-hidden="true"
-                    />
-                    {DATING_APPS[appIndex].name}
-                  </span>
+            </span>
+            <span className="mobile-title">
+              LARPMAXXING
+              <br />
+              ON{" "}
+              <span className="rotating-app" aria-live="polite">
+                <span key={appIndex} className="rotating-app-word">
+                  <img
+                    className="app-icon"
+                    src={`/dating-apps/${DATING_APPS[appIndex].slug}.jpg`}
+                    alt=""
+                    aria-hidden="true"
+                  />
+                  {DATING_APPS[appIndex].name}
                 </span>
               </span>
-            </h1>
-            <p>
-              One selfie becomes any guy hot girls swipe on.<br />Way more matches, zero photoshoot.
-            </p>
-            <div className="hero-stat">
-              <Heart className="hero-stat-heart" fill="currentColor" aria-hidden="true" />
-              <span>
-                <strong>{displayCount.toLocaleString()}</strong> new matches made and counting.
-              </span>
-            </div>
-
-            <form onSubmit={onSubmit} className="waitlist-form">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value)
-                  setError(null)
-                }}
-                placeholder="name@email.com"
-                aria-label="Email address"
-              />
-              <button type="submit" disabled={submitting}>
-                {submitting ? "Submitting..." : submitted ? "Joined" : "Join Waitlist"}
-              </button>
-            </form>
-            {error && <p className="form-error">{error}</p>}
+            </span>
+          </h1>
+          <p>
+            One selfie becomes any guy hot girls swipe on.<br />Way more matches, zero photoshoot.
+          </p>
+          <div className="hero-stat">
+            <Heart className="hero-stat-heart" fill="currentColor" aria-hidden="true" />
+            <span>
+              <strong>{displayCount.toLocaleString()}</strong> new matches made and counting.
+            </span>
           </div>
-        )}
+
+          <a className="get-app-button" href={APP_STORE_URL}>
+            Get App
+          </a>
+        </div>
       </section>
+
+      <aside className="device-showcase" aria-hidden="true">
+        <div className="device-frame">
+          <div className="device-screen">
+            {DEVICE_SCREENSHOT ? (
+              <img className="device-screenshot" src={DEVICE_SCREENSHOT} alt="" />
+            ) : (
+              <div className="hinge-profile">
+                <div className="hinge-photo hinge-photo-hero">
+                  <div className="hinge-scrim" />
+                  <div className="hinge-name">
+                    <span className="hinge-name-main">Alex, 27</span>
+                    <span className="hinge-name-sub">6 miles away · Verified</span>
+                  </div>
+                  <span className="hinge-like">
+                    <Heart fill="currentColor" aria-hidden="true" />
+                  </span>
+                </div>
+                <div className="hinge-prompt">
+                  <span className="hinge-prompt-label">The way to win me over is</span>
+                  <p className="hinge-prompt-answer">
+                    A good coffee, a better playlist, and zero small talk.
+                  </p>
+                  <span className="hinge-like hinge-like-inline">
+                    <Heart fill="currentColor" aria-hidden="true" />
+                  </span>
+                </div>
+                <div className="hinge-photo hinge-photo-secondary">
+                  <span className="hinge-like">
+                    <Heart fill="currentColor" aria-hidden="true" />
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+          <img
+            className="device-mockup"
+            src="/devices/iphone-15-pro.png"
+            alt=""
+          />
+        </div>
+      </aside>
 
       <footer className="landing-footer">
         <div className="social-links" aria-label="Social links">
