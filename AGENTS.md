@@ -114,7 +114,7 @@ imports resolve and the `design/fonts/*` url()s bundle.
 | Typecheck | `npm run typecheck` (`tsc --noEmit`) |
 | Lint | `npm run lint` (`eslint .` — flat config from `eslint-config-next/core-web-vitals` + `/typescript`; do NOT use `next lint`, removed in Next 16) |
 | Test | none yet |
-| Env vars | `NEXT_PUBLIC_SITE_URL` (optional) — public origin for canonical + absolute OG/Twitter image URLs (US-011); falls back to `https://wishmax.app`. Set per deploy env. |
+| Env vars | `NEXT_PUBLIC_SITE_URL` (optional) — public origin for canonical + absolute OG/Twitter image URLs (US-011); falls back to `https://wishmax.app`. Set per deploy env. · `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (optional, US-012) — Plausible site domain; analytics loads ONLY in production when this is set (unset ⇒ no analytics, dev logs events to console). `NEXT_PUBLIC_PLAUSIBLE_SRC` (optional) — override the Plausible script URL (defaults to `https://plausible.io/js/script.tagged-events.js`; set for a self-hosted/proxied instance). |
 | Deploy | TBD (Vercel-style static/SSR target) |
 
 Sharing mechanism decision (US-001): **direct relative `@import` of the shared

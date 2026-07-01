@@ -312,3 +312,32 @@ token-literal audit before marking any UI story done:
 - [x] Lint passes: `cd web && npm run lint`.
 - [x] Build passes: `cd web && npm run build` (`/opengraph-image`, `/twitter-image`,
       `/robots.txt`, `/sitemap.xml` all prerendered ○ Static).
+
+### US-012 — Analytics & conversion tracking
+
+- [x] Privacy-conscious analytics tool integrated — Plausible (cookieless, no PII,
+      no cross-site tracking → GDPR/CCPA-friendly, no consent banner). Behind a thin
+      seam `web/app/lib/analytics.ts` (`track(event, props)` + `EVENTS` map); loaded
+      by `web/app/components/Analytics.tsx` (root layout) via `next/script` + queue
+      stub, ONLY when `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set in production.
+- [x] Primary CTA clicks fire a tracked event — `web/app/components/CtaLink.tsx`
+      (wraps `ButtonLink`, reads the `PRIMARY_CTA` swap seam) fires `CTA Click`
+      `{location, mode}`; used in SiteHeader (header + mobile-menu) and Hero (hero).
+      Verified in-browser: dev console `[analytics] CTA Click {location:header/hero,…}`;
+      prod (stub) routed to `window.plausible` with the payload.
+- [x] Waitlist submissions fire a tracked event — Waitlist.tsx fires `Waitlist Signup`
+      `{source:"waitlist-section"}` in the `res.ok` SUCCESS branch only (post server 200;
+      honeypot/rate-limited/invalid never reach it). Verified in-browser (dev console +
+      prod stub payload).
+- [x] No analytics noise in development — unconfigured, `track()` uses `console.debug`
+      and makes ZERO network requests; the Plausible script is never injected in dev.
+      Verified: 0 analytics requests, 0 `script[data-domain]`, `window.plausible`=undefined.
+- [x] Respects basic consent expectations — `track()` honors Do Not Track / Global
+      Privacy Control (`navigator.doNotTrack`/`msDoNotTrack`/`globalPrivacyControl`) and
+      no-ops when opted out. Verified: with DNT on, 0 events recorded despite script loaded.
+- [x] No secrets client-side — the seam reads only the PUBLIC `NEXT_PUBLIC_PLAUSIBLE_*`
+      values; no server-only import in `lib/analytics.ts`.
+- [x] Token-only: analytics has no visual output; token-literal audit on changed files CLEAN.
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build`.

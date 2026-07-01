@@ -24,6 +24,7 @@ import {
   isValidEmail,
   type WaitlistResponse,
 } from "../lib/waitlist";
+import { EVENTS, track } from "../lib/analytics";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -62,6 +63,9 @@ export function Waitlist() {
       const data = (await res.json()) as WaitlistResponse;
 
       if (res.ok && data.ok) {
+        // Fire the conversion event only after the server accepts the signup —
+        // honeypot/rate-limited/invalid submissions never reach here.
+        track(EVENTS.waitlistSignup, { source: "waitlist-section" });
         setStatus("success");
         setMessage(data.message || "You're on the list.");
         setEmail("");

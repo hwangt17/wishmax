@@ -9,8 +9,7 @@
  * styling is token-driven via ./chrome.css (.wm-header / .wm-nav / .wm-btn).
  */
 import { useState } from "react";
-import { ButtonLink } from "./Button";
-import { PRIMARY_CTA } from "../lib/cta";
+import { CtaLink } from "./CtaLink";
 
 /** Nav targets anchor the sections built in later PRD-02 stories. */
 const NAV_LINKS = [
@@ -18,10 +17,6 @@ const NAV_LINKS = [
   { href: "#examples", label: "Examples" },
   { href: "#faq", label: "FAQ" },
 ];
-
-/* Primary CTA target is centralized in lib/cta.ts (swaps to App Store at launch). */
-const CTA_HREF = PRIMARY_CTA.href;
-const CTA_LABEL = PRIMARY_CTA.label;
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,7 +41,7 @@ export function SiteHeader() {
               </li>
             ))}
           </ul>
-          <ButtonLink href={CTA_HREF}>{CTA_LABEL}</ButtonLink>
+          <CtaLink location="header" />
         </nav>
 
         {/* Mobile hamburger — hidden on desktop via CSS. */}
@@ -81,9 +76,7 @@ export function SiteHeader() {
               </li>
             ))}
           </ul>
-          <ButtonLink href={CTA_HREF} onClick={closeMenu}>
-            {CTA_LABEL}
-          </ButtonLink>
+          <CtaLink location="mobile-menu" onClick={closeMenu} />
         </nav>
       )}
     </header>
