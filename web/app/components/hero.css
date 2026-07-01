@@ -1,0 +1,112 @@
+/*
+ * Hero section styling (US-003).
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
+ * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
+ * Mobile-first single column; two columns from the tablet breakpoint up. The
+ * section sits on the periwinkle→white wash surface (a gradient on a SURFACE,
+ * never on an interactive element — per DESIGN.md). No box-shadow on this
+ * full-bleed section (elevation is for cards only).
+ *
+ * Non-visual literals only: max-width content measures (ch), 1fr grid tracks,
+ * media-query breakpoints.
+ */
+
+.wm-hero {
+  background-image: var(--gradient-sky-periwinkle);
+}
+
+.wm-hero__inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-60) var(--spacing-24) var(--spacing-80);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-40);
+  align-items: center;
+}
+
+/* ------------------------------------------------------------------ Copy -- */
+
+.wm-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-20);
+}
+
+.wm-hero__eyebrow {
+  display: inline-flex;
+}
+
+/* Hook headline — the one place Space Grotesk display face is licensed to run
+   (≥ 26px). Sized up on wider viewports via the breakpoint below. */
+.wm-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading-lg);
+  line-height: var(--leading-heading-lg);
+  letter-spacing: var(--tracking-heading-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-midnight-ink);
+  max-width: 18ch;
+}
+
+.wm-hero__subhead {
+  margin: 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-slate);
+  max-width: 46ch;
+}
+
+.wm-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+}
+
+.wm-hero__microcopy {
+  margin: 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-ash);
+}
+
+/* ---------------------------------------------------------------- Visual -- */
+
+.wm-hero__visual {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  width: 100%;
+  /* Fills the column — the before/after proof is the hero's credibility anchor,
+     so it stays prominent on mobile rather than shrinking. */
+}
+
+.wm-hero__caption {
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-ash);
+}
+
+/* --------------------------------------------------------- Tablet and up -- */
+
+@media (min-width: 768px) {
+  .wm-hero__inner {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--spacing-60);
+    padding-top: var(--spacing-80);
+  }
+
+  .wm-hero__title {
+    font-size: var(--text-display);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+}

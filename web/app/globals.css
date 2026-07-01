@@ -17,6 +17,10 @@
 /* Site chrome (header, footer, nav, ported Button) — token-only, real
  * pseudo-states. See ./components/chrome.css. */
 @import "./components/chrome.css";
+/* Ported PRD-01 components (Badge, Feed Photo Tile, Before/After card). */
+@import "./components/showcase.css";
+/* Landing sections. */
+@import "./components/hero.css";
 
 html,
 body {

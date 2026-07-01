@@ -1,0 +1,145 @@
+/*
+ * Ported PRD-01 design-system components (Badge, Feed Photo Tile, Before/After
+ * Card) — the transformation-proof stack used by the landing hero (US-003) and
+ * the gallery (US-005).
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md, consumed via the tokens imported in
+ * globals.css. Ported verbatim from design/showcase/src/components.css so the
+ * marketing site shares the exact design-system styling; every color, size,
+ * radius, spacing, weight, and shadow below is a var(--…) token — no literal
+ * hex / px / font values. Non-visual literals only: 1px/2px hairline &
+ * focus-outline widths, aspect ratios, object-fit, opacity, unitless
+ * transforms, transition/animation timing, keyframe stops.
+ */
+
+/* ------------------------------------------------------------- Pill badge -- */
+
+.wm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  line-height: var(--leading-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-6) var(--spacing-12);
+  white-space: nowrap;
+}
+
+.wm-badge--soft {
+  background-color: var(--surface-tint-soft);
+}
+
+.wm-badge--strong {
+  background-color: var(--surface-tint-strong);
+}
+
+/* On photo: a frosted dark pill with white text, legible over photography. */
+.wm-badge--on-photo {
+  background-color: var(--surface-tint-strong);
+  color: var(--color-pure-canvas);
+}
+
+.wm-badge__icon {
+  width: var(--text-label);
+  height: var(--text-label);
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Status dot — the only place the semantic colors appear (generation state). */
+.wm-badge__dot {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  /* background-color is set per status from a --color-status-* token inline. */
+}
+
+/* -------------------------------------------------------- Feed photo tile -- */
+
+/* THE hero component: ~3:4 portrait, full-bleed image, 12px radius. Optional
+   top-corner category / Premium overlays sit over a legibility scrim. On web
+   the photo is a next/image with `fill`, so this stays position:relative. */
+.wm-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: var(--surface-tint-soft);
+  border-radius: var(--radius-images);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Full-bleed photography (object-fit cover keeps the 3:4 frame). next/image
+   fill sets position/inset inline; we only need the cover fit. */
+.wm-tile__img {
+  object-fit: cover;
+}
+
+/* Empty stand-in: a gradient stands in for photography (empty state only). */
+.wm-tile__placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+/* Top scrim — darkens the top edge so corner chips/badges stay legible. */
+.wm-tile__scrim {
+  position: absolute;
+  inset: 0;
+  background-image: var(--gradient-scrim);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Top-corner overlay row: category (left) + Premium/lock (right). */
+.wm-tile__overlay {
+  position: absolute;
+  top: var(--spacing-8);
+  left: var(--spacing-8);
+  right: var(--spacing-8);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Selected — black ring (selection lives in the black & white system). */
+.wm-tile.is-selected {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------- Before / after card -- */
+
+/* Two feed tiles paired — the primary credibility component. */
+.wm-ba-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-8);
+  background-color: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-8);
+}
+
+.wm-ba-card__pane {
+  position: relative;
+}
+
+/* Before / After pill label, top-left over each tile. */
+.wm-ba-card__label {
+  position: absolute;
+  top: var(--spacing-8);
+  left: var(--spacing-8);
+  z-index: 2;
+  pointer-events: none;
+}
