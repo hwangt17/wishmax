@@ -1,0 +1,164 @@
+/*
+ * Social proof section styling (US-007).
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
+ * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
+ * Cards follow the DESIGN.md "Standard Content Card" spec (white surface,
+ * --shadow-sm, radius-cards). The section sits on the periwinkle→white wash
+ * (surface only) to continue the alternating white/wash rhythm, and carries NO
+ * box-shadow itself (elevation is cards-only). Stars use ink fill (the
+ * black/white action system) — never a colored/gold accent.
+ *
+ * Mobile-first single column; three columns from the tablet breakpoint up.
+ * Non-visual literals only: 1fr grid tracks, ch measures, media breakpoints.
+ */
+
+.wm-proof {
+  background-image: var(--gradient-sky-periwinkle);
+}
+
+.wm-proof__inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-80) var(--spacing-24);
+}
+
+/* --------------------------------------------------------------- Heading -- */
+
+.wm-proof__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+  margin-bottom: var(--spacing-40);
+}
+
+.wm-proof__eyebrow {
+  display: inline-flex;
+}
+
+/* Section title — Inter 700 (Space Grotesk is hero-only ≥ 26px per DESIGN.md). */
+.wm-proof__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  max-width: 20ch;
+}
+
+.wm-proof__lede {
+  margin: 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-slate);
+  max-width: 54ch;
+}
+
+/* ------------------------------------------------------------------ Grid -- */
+
+.wm-proof__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-20);
+}
+
+/* Standard Content Card. Two text sizes: the quote (heading-sm) + the caption
+   name/handle. Stars are icons, not text. */
+.wm-proof__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+  background: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-24) var(--spacing-20);
+}
+
+/* Star rating — filled mono ink glyphs. */
+.wm-proof__stars {
+  display: inline-flex;
+  gap: var(--spacing-4);
+  color: var(--color-midnight-ink);
+}
+
+.wm-proof__star {
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  display: block;
+}
+
+.wm-proof__quote {
+  margin: 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-graphite);
+}
+
+/* Attribution row — avatar + name/handle. */
+.wm-proof__person {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  margin-top: auto;
+}
+
+/* Circular avatar frame — next/image fill needs a sized position:relative box. */
+.wm-proof__avatar {
+  position: relative;
+  flex: none;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  background: var(--surface-tint-soft);
+}
+
+.wm-proof__avatar-img {
+  border-radius: var(--radius-full);
+}
+
+.wm-proof__meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.wm-proof__name {
+  font-size: var(--text-label);
+  line-height: var(--leading-label);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-midnight-ink);
+}
+
+.wm-proof__handle {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-ash);
+}
+
+/* Honest pre-launch label (mirrors the Gallery's sample caption). */
+.wm-proof__note {
+  margin: var(--spacing-24) 0 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-ash);
+}
+
+/* --------------------------------------------------------- Tablet and up -- */
+
+@media (min-width: 768px) {
+  .wm-proof__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-24);
+  }
+}
