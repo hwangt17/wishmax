@@ -93,4 +93,26 @@ tokens (web) or `theme.font.*` (RN).
 The token sources themselves (`design/theme.ts`) typecheck standalone via
 `cd design && npx -y -p typescript@latest tsc -p tsconfig.json`.
 
+### Stack — marketing website (Wishmax landing)
+
+The product marketing website lives at `web/` (Next.js App Router + React +
+TypeScript). The first screen intentionally mirrors the zigzag waitlist landing
+page structure: full-viewport hero, rotated moving collage, email capture, and
+success/share state. The collage uses blank white media tiles until real
+before/after assets are ready.
+
+| Concern | Command (run from `web/`) |
+|---|---|
+| Install | `npm install` |
+| Dev server | `npm run dev -- --port 3017` or `./node_modules/.bin/next dev --port 3017` |
+| Build | `npm run build` |
+| Typecheck | `npm run typecheck` |
+| Lint | `npm run lint` (`eslint .`) |
+| Test | none yet |
+| Env vars | none for local waitlist prototype |
+| Deploy | likely Vercel, not configured yet |
+
+Local waitlist submissions are stored in `web/.data/waitlist.json`, which is
+gitignored. Replace that route with production persistence before launch.
+
 Node v25 / npm 11; no global `tsc` (use the local devDependency or `npx`).
