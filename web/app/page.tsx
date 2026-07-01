@@ -8,12 +8,14 @@
  */
 import { Hero } from "./components/Hero";
 import { HowItWorks } from "./components/HowItWorks";
+import { Gallery } from "./components/Gallery";
 
 export default function Home() {
   return (
     <main>
       <Hero />
       <HowItWorks />
+      <Gallery />
     </main>
   );
 }

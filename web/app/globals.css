@@ -22,6 +22,7 @@
 /* Landing sections. */
 @import "./components/hero.css";
 @import "./components/howitworks.css";
+@import "./components/gallery.css";
 
 html,
 body {

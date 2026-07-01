@@ -1,0 +1,99 @@
+/*
+ * Transformation gallery / sample feed showcase styling (US-005).
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
+ * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
+ * The gallery mirrors the app's feed: a responsive grid of Feed Photo Tiles
+ * (3:4, radius-images, category chip over a scrim) on the periwinkle→white wash
+ * surface — the alternating gradient-wash rhythm from DESIGN.md (this section
+ * sits between the white "How it works" section and the following white ones).
+ * The section carries NO box-shadow (elevation is cards/tiles only).
+ *
+ * Mobile-first: two tile columns; three from the tablet breakpoint, four from
+ * desktop. Non-visual literals only: 1fr grid tracks, ch measures, breakpoints.
+ */
+
+.wm-gallery {
+  background-image: var(--gradient-sky-periwinkle);
+}
+
+.wm-gallery__inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-80) var(--spacing-24);
+}
+
+/* --------------------------------------------------------------- Heading -- */
+
+.wm-gallery__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+  margin-bottom: var(--spacing-40);
+}
+
+.wm-gallery__eyebrow {
+  display: inline-flex;
+}
+
+/* Section title — Inter 700 (Space Grotesk is hero-only ≥ 26px per DESIGN.md). */
+.wm-gallery__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  max-width: 20ch;
+}
+
+.wm-gallery__lede {
+  margin: 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-slate);
+  max-width: 56ch;
+}
+
+/* ----------------------------------------------------------------- Grid -- */
+
+.wm-gallery__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-16);
+}
+
+.wm-gallery__item {
+  margin: 0;
+  padding: 0;
+}
+
+.wm-gallery__caption {
+  margin: var(--spacing-24) 0 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-ash);
+}
+
+/* --------------------------------------------------------- Tablet and up -- */
+
+@media (min-width: 768px) {
+  .wm-gallery__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-20);
+  }
+}
+
+@media (min-width: 1024px) {
+  .wm-gallery__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-20);
+  }
+}
