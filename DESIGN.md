@@ -56,7 +56,8 @@ Partiful's "Partiful Display Medium" and "TWK Lausanne Pan" are proprietary. Wis
 | Spearmint | `linear-gradient(130deg, rgb(133,218,220) 0%, rgb(192,226,226) 100%)` | `--gradient-spearmint` | Decorative content-level gradient inside template/preview imagery. |
 | Midnight Blue | `#001666` | `--color-midnight-blue` | Deep brand accent inside decorative template designs. |
 | Hot Pink | `#ff3d8b` | `--color-hot-pink` | Match/like indicator **only** (e.g. the pulsing "matches made" heart) — a vivid romance accent reserved for the match motif, not general UI. |
-| Match Gain | `#31c431` | `--color-match-gain` | Match-uplift stat **only** — the "+X% matches" gain labels on the collage result cards. Reads as a positive-delta accent within the match motif; not a job-status signal and not general UI. |
+| Match Gain | `#31c431` | `--color-match-gain` | Match-uplift stat **only** — the "X% matches" gain labels on the collage result cards. Reads as a positive-delta accent within the match motif; not a job-status signal and not general UI. |
+| Match Gain Soft | `rgba(49,196,49,0.18)` | `--color-match-gain-soft` | Translucent green fill behind the Match Gain badge on photo tiles — a frosted-green chip so the green gain text sits on a tinted surface instead of solid white. Same restriction as Match Gain (match-uplift stat only). |
 
 **Semantic colors — reserved for generation/job status only** (never decorative): Success/Done `#31c431` · Pending/Processing `#ffae00` · Failed `#ff0000`.
 

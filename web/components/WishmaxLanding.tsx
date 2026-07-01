@@ -151,21 +151,26 @@ export function WishmaxLanding() {
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className="collage-column">
               <div className={columnIndex % 2 === 0 ? "marquee marquee-down" : "marquee marquee-up"}>
-                {[...column, ...column, ...column].map((tile, tileIndex) => (
-                  <div key={`${tile}-${tileIndex}`} className="blank-photo-tile">
-                    <div className="tile-flip">
-                      <div className="tile-face tile-face-after">
-                        <span className="tile-label">
-                          <TrendingUp className="tile-gain-icon" aria-hidden="true" />
-                          +{matchBoost(tile)}% likes
-                        </span>
-                      </div>
-                      <div className="tile-face tile-face-before">
-                        <span className="tile-label">original</span>
+                {[...column, ...column, ...column].map((tile, tileIndex) => {
+                  const photoSrc = `/placeholder-background-images/source_image_${tile + 1}.webp`
+                  return (
+                    <div key={`${tile}-${tileIndex}`} className="blank-photo-tile">
+                      <div className="tile-flip">
+                        <div className="tile-face tile-face-after">
+                          <img className="tile-photo" src={photoSrc} alt="" loading="lazy" decoding="async" />
+                          <span className="tile-label">
+                            <TrendingUp className="tile-gain-icon" aria-hidden="true" />
+                            {matchBoost(tile)}% likes
+                          </span>
+                        </div>
+                        <div className="tile-face tile-face-before">
+                          <img className="tile-photo" src={photoSrc} alt="" loading="lazy" decoding="async" />
+                          <span className="tile-label">original</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           ))}

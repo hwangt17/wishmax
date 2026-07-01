@@ -18,7 +18,7 @@ export const theme = {
     slate: '#666666', ash: '#999999', fog: '#b3b3b3', silver: '#cccccc',
     warmSand: '#d9c58b', partyPink: '#f8c4ff', skyPeriwinkle: '#96c4ff',
     spearmint: '#85dadc', midnightBlue: '#001666', hotPink: '#ff3d8b',
-    matchGain: '#31c431',
+    matchGain: '#31c431', matchGainSoft: 'rgba(49,196,49,0.18)',
     statusDone: '#31c431', statusProcessing: '#ffae00', statusFailed: '#ff0000',
   },
   font: { display: 'SpaceGrotesk', sans: 'Inter' },
