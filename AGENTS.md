@@ -114,7 +114,7 @@ imports resolve and the `design/fonts/*` url()s bundle.
 | Typecheck | `npm run typecheck` (`tsc --noEmit`) |
 | Lint | `npm run lint` (`eslint .` — flat config from `eslint-config-next/core-web-vitals` + `/typescript`; do NOT use `next lint`, removed in Next 16) |
 | Test | none yet |
-| Env vars | none yet (waitlist store seam lands in US-010) |
+| Env vars | `NEXT_PUBLIC_SITE_URL` (optional) — public origin for canonical + absolute OG/Twitter image URLs (US-011); falls back to `https://wishmax.app`. Set per deploy env. |
 | Deploy | TBD (Vercel-style static/SSR target) |
 
 Sharing mechanism decision (US-001): **direct relative `@import` of the shared

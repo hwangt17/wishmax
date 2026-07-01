@@ -279,3 +279,36 @@ token-literal audit before marking any UI story done:
       wash, no section shadow; honeypot tabindex -1 + aria-hidden + clipped; input
       8px radius + 2px black focus ring; invalid → error + aria-invalid; valid →
       success card replaces the form): screenshots `/tmp/wm-us010-{390,768,1280,success}.png`.
+
+### US-011 — SEO, metadata & Open Graph
+- [x] Title, meta description, canonical, and OG/Twitter card metadata set — verified
+      in view-source: `<title>`, `<meta name="description">`, `<link rel="canonical"
+      href="https://wishmax.app">`, full `og:*` (title/description/url/site_name/
+      locale/type + `og:image` 1200×630 png + alt), full `twitter:*`
+      (`summary_large_image` + image + alt + dims). Centralized in
+      `web/app/lib/site.ts` (SITE_URL env-driven, `NEXT_PUBLIC_SITE_URL` →
+      `https://wishmax.app` fallback) + `metadataBase` in `web/app/layout.tsx`.
+- [x] A designed OG image renders for link shares — `web/app/opengraph-image.tsx`
+      (`next/og` 1200×630) + `web/app/twitter-image.tsx` (re-exports it → byte-identical,
+      md5-verified). Fetched `/opengraph-image` → real PNG, visually on-brand
+      (periwinkle wash, wordmark, heavy-Inter headline, black "Get my photos" chip,
+      origin), NOT generic. Consumes token values from `design/theme.ts`.
+- [x] sitemap.xml + robots.txt present — `web/app/sitemap.ts` (→ `/sitemap.xml`,
+      valid urlset) + `web/app/robots.ts` (→ `/robots.txt`, `Allow: /` + Host +
+      Sitemap URL). Both prerendered ○ Static.
+- [x] Semantic headings + alt text on all imagery — re-audited: exactly one `<h1>`
+      (Hero), `<h2>` per section (each `aria-labelledby` its title), `<h3>` cards/FAQ;
+      every `next/image` has a descriptive `alt` (already in place from prior stories).
+- [x] Metadata + OG image verified to render — via view-source (curl) + rendered PNG
+      inspection + md5 (OG === Twitter). Confirmed the BUILD-prerendered
+      `.next/server/app/index.html` bakes the ABSOLUTE `https://wishmax.app/opengraph-image`
+      (the `localhost` og:image is only a `next start` serve artifact).
+- [x] Token-only: OG card is baked raster image content (same carve-out as
+      `design/theme.ts` + `gen-*.mjs`) — colors/radius/spacing from `design/theme.ts`;
+      only raster-scale font sizes are pixel literals. SATORI GOTCHA recorded: the
+      variable `SpaceGrotesk-Variable.ttf` crashes `next/og` (`reading '256'`) —
+      static-weight TTFs only; OG headline uses heavy Inter (in-system).
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build` (`/opengraph-image`, `/twitter-image`,
+      `/robots.txt`, `/sitemap.xml` all prerendered ○ Static).
