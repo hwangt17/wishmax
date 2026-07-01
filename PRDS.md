@@ -2,7 +2,7 @@
 
 | PRD | Status | Branch | Source | Notes |
 |---|---|---|---|---|
-| PRD-01 Design System | QA | `ralph/design-system` | `tasks/prd-design-system.md` | Foundation. `DESIGN.md` (repo root) is the visual source of truth (Partiful-derived, light/playful). PRD materializes it into web + RN tokens, fonts, core components, and enforces it in the agent loop. All 9 stories complete; under QA audit. Build first. |
+| PRD-01 Design System | Complete | `ralph/design-system` | `archive/2026-07-01-design-system/prd-design-system.md` | Foundation. `DESIGN.md` (repo root) is the visual source of truth (Partiful-derived, light/playful). Materialized into web + RN tokens, fonts, core components, and enforced in the agent loop. All 9 stories complete; QA passed. Archived to `archive/2026-07-01-design-system/`. |
 | PRD-02 Landing Page | Planned | `ralph/landing-page` | `tasks/prd-landing-page.md` | Marketing site. Next.js + TS + Tailwind, conversion-focused. Depends on PRD-01. |
 | PRD-03 App MVP | Planned | `ralph/app-mvp` | `tasks/prd-app-mvp.md` | Expo React Native (iOS + Android) + backend proxy (auth, paywall, GPT-Image 2 / Nano Banana Pro). Depends on PRD-01. |
 
