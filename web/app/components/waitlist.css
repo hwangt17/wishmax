@@ -1,0 +1,210 @@
+/*
+ * Waitlist section styling (US-010) — the closing email-capture CTA.
+ *
+ * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
+ * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
+ * Section sits on the periwinkle wash (surface only) for the alternating
+ * white/wash rhythm (the FAQ above is on the white canvas); it carries NO
+ * box-shadow itself (elevation is cards-only).
+ *
+ * Action system stays black & white — the input focus ring, error border, and
+ * success glyph are all midnight-ink, never a colored accent (status colors are
+ * reserved for generation state per DESIGN.md, so form errors are NOT red).
+ *
+ * Non-visual literals only: the min-width breakpoint, ch measures, the 2px
+ * focus-ring width, and the visually-hidden 1px clip pattern.
+ */
+
+.wm-waitlist {
+  background: var(--gradient-sky-periwinkle);
+}
+
+.wm-waitlist__inner {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-80) var(--spacing-24);
+}
+
+/* Focused single-column CTA — a constrained measure reads best. */
+.wm-waitlist__card {
+  max-width: 60ch;
+}
+
+.wm-waitlist__eyebrow {
+  display: inline-flex;
+}
+
+/* Section title — Inter 700 (Space Grotesk is hero-only ≥ 26px per DESIGN.md). */
+.wm-waitlist__title {
+  margin: var(--spacing-16) 0 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-midnight-ink);
+  max-width: 18ch;
+}
+
+.wm-waitlist__lede {
+  margin: var(--spacing-12) 0 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-slate);
+  max-width: 52ch;
+}
+
+/* -------------------------------------------------------------------- Form -- */
+
+.wm-waitlist__form {
+  margin-top: var(--spacing-24);
+}
+
+/* Stacked on mobile → email + button side by side from the breakpoint up. */
+.wm-waitlist__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  align-items: stretch;
+}
+
+.wm-waitlist__field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Label present for a11y; visually hidden (placeholder carries the visible cue). */
+.wm-waitlist__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.wm-waitlist__input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  color: var(--color-midnight-ink);
+  background: var(--surface-card);
+  border: 1px solid var(--color-silver);
+  border-radius: var(--radius-inputs);
+  padding: var(--spacing-12) var(--spacing-16);
+}
+
+.wm-waitlist__input::placeholder {
+  color: var(--color-ash);
+}
+
+/* 2px midnight-ink focus ring — matches the DESIGN.md selection invariant,
+   drawn as an outline so it never reflows the layout. */
+.wm-waitlist__input:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: var(--spacing-4);
+}
+
+/* Error = stronger ink border (still black/white — no red), width unchanged so
+   there is no reflow; the message text carries the detail. */
+.wm-waitlist__input[aria-invalid="true"] {
+  border-color: var(--color-midnight-ink);
+}
+
+.wm-waitlist__input:disabled {
+  background: var(--surface-tint-soft);
+  color: var(--color-slate);
+}
+
+/* Button sizes to its content in the row; full-width when the row stacks. */
+.wm-waitlist__submit {
+  flex: none;
+  width: 100%;
+}
+
+/* Visually-hidden honeypot — off the layout, out of the tab order (tabIndex on
+   the input), and skipped by AT (aria-hidden on the wrapper). */
+.wm-waitlist__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------- Feedback -- */
+
+.wm-waitlist__message {
+  margin: var(--spacing-12) 0 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--color-graphite);
+}
+
+.wm-waitlist__message--error {
+  color: var(--color-midnight-ink);
+  font-weight: var(--font-weight-semibold);
+}
+
+.wm-waitlist__microcopy {
+  margin: var(--spacing-16) 0 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  letter-spacing: var(--tracking-caption);
+  color: var(--color-slate);
+  max-width: 48ch;
+}
+
+/* ---------------------------------------------------------------- Success -- */
+
+.wm-waitlist__success {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  margin-top: var(--spacing-24);
+  background: var(--surface-card);
+  border-radius: var(--radius-cards);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-16);
+  max-width: 52ch;
+}
+
+.wm-waitlist__check {
+  flex: none;
+  width: var(--spacing-24);
+  height: var(--spacing-24);
+  color: var(--color-midnight-ink);
+}
+
+.wm-waitlist__success-text {
+  margin: 0;
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-midnight-ink);
+}
+
+/* ------------------------------------------------------------ Breakpoint -- */
+
+@media (min-width: 600px) {
+  .wm-waitlist__row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .wm-waitlist__submit {
+    width: auto;
+  }
+}

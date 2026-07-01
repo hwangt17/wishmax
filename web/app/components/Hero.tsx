@@ -14,6 +14,7 @@
 import { Badge } from "./Badge";
 import { BeforeAfterCard } from "./BeforeAfterCard";
 import { ButtonLink } from "./Button";
+import { PRIMARY_CTA } from "../lib/cta";
 
 export function Hero() {
   return (
@@ -35,7 +36,7 @@ export function Hero() {
           </p>
 
           <div className="wm-hero__actions">
-            <ButtonLink href="#waitlist">Get my photos</ButtonLink>
+            <ButtonLink href={PRIMARY_CTA.href}>{PRIMARY_CTA.label}</ButtonLink>
             <ButtonLink href="#examples" variant="ghost">
               See the transformations
             </ButtonLink>

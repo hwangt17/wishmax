@@ -10,6 +10,7 @@
  */
 import { useState } from "react";
 import { ButtonLink } from "./Button";
+import { PRIMARY_CTA } from "../lib/cta";
 
 /** Nav targets anchor the sections built in later PRD-02 stories. */
 const NAV_LINKS = [
@@ -18,9 +19,9 @@ const NAV_LINKS = [
   { href: "#faq", label: "FAQ" },
 ];
 
-/** Where the primary CTA points pre-launch (swaps to App Store at launch). */
-const CTA_HREF = "#waitlist";
-const CTA_LABEL = "Get my photos";
+/* Primary CTA target is centralized in lib/cta.ts (swaps to App Store at launch). */
+const CTA_HREF = PRIMARY_CTA.href;
+const CTA_LABEL = PRIMARY_CTA.label;
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);

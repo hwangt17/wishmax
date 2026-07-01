@@ -20,6 +20,9 @@ yarn-error.log*
 # env files
 .env*.local
 
+# waitlist placeholder store (US-010) — local JSONL, not committed
+/.waitlist-data
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

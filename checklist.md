@@ -243,3 +243,39 @@ token-literal audit before marking any UI story done:
       section, no shadow; Inter 24px title; 5 panels start hidden; click + Enter
       open / Space closes; cards `--shadow-sm` + 12px radius): screenshots
       `/tmp/wm-us009-{mobile,tablet,desktop}.png`.
+
+### US-010 — Primary CTA + waitlist email capture
+
+- [x] Waitlist section renders at the end of the page with `id="waitlist"`
+      (matches the header + hero primary-CTA anchors); on the periwinkle wash
+      for rhythm against the white FAQ above.
+- [x] Primary CTA captures an email pre-launch; the CTA target is centralized in
+      `web/app/lib/cta.ts` (`PRIMARY_CTA`) and consumed by SiteHeader + Hero, so
+      it swaps to an App Store / TestFlight link at launch via a one-line change
+      (no component re-architecting).
+- [x] Submissions persist via a Next.js route handler (`POST /api/waitlist`)
+      behind a single `saveWaitlistEmail(entry)` seam (`web/app/lib/waitlist-store.ts`);
+      v1 placeholder = gitignored JSONL, documented and swappable to a real
+      provider without touching callers.
+- [x] Validation + states handled: invalid email → inline error + `aria-invalid`;
+      submitting → Button loading; success → confirmation card replaces the form;
+      network/server error → inline message. Shared `isValidEmail` runs client-side
+      (instant) and is re-checked authoritatively on the server.
+- [x] No secrets client-side: the store (node:fs) is server-only, imported only by
+      the route; the form only `fetch`es. Spam guards verified via curl —
+      **honeypot** (filled `company` field) returns 200 but the email is ABSENT
+      from the store; **per-IP rate limit** (5/min) returns 429 on the 6th rapid
+      same-IP POST (`Retry-After` set). Malformed JSON → 400; invalid email → 400.
+- [x] Form errors stay in the black/white system (no red — status colors are
+      reserved for generation state): invalid input uses a stronger midnight-ink
+      border (no reflow) + ink message text; focus = 2px midnight-ink outline;
+      input radius `--radius-inputs` (8px); title Inter 700 24px.
+- [x] Token-only: token-literal audit on `Waitlist.tsx` + `waitlist.css` + `lib/`
+      + `api/` is CLEAN.
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build` (`/api/waitlist` registered as ƒ Dynamic).
+- [x] Browser-verified (Playwright + system Chrome) at 390 / 768 / 1280 (periwinkle
+      wash, no section shadow; honeypot tabindex -1 + aria-hidden + clipped; input
+      8px radius + 2px black focus ring; invalid → error + aria-invalid; valid →
+      success card replaces the form): screenshots `/tmp/wm-us010-{390,768,1280,success}.png`.

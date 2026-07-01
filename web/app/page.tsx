@@ -12,6 +12,7 @@ import { Gallery } from "./components/Gallery";
 import { Benefits } from "./components/Benefits";
 import { SocialProof } from "./components/SocialProof";
 import { Faq } from "./components/Faq";
+import { Waitlist } from "./components/Waitlist";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       <Benefits />
       <SocialProof />
       <Faq />
+      <Waitlist />
     </main>
   );
 }
