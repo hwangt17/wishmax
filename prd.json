@@ -97,8 +97,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Done 2026-07-01. Benefits section (web/app/components/Benefits.tsx + benefits.css, rendered by page.tsx after Gallery) with id='benefits'. Maps FOUR concrete, named pain points → Wishmax outcomes, each benefit → exactly one pain: Bad lighting → 'Studio-grade light on every shot'; No good photos → 'A full lineup of scroll-stopping shots'; Expensive photographers → 'Pro results without the pro price tag'; Low matches → 'Photos that pull more right-swipes'. Each is a DESIGN.md Standard Content Card (white surface, --shadow-sm, radius-cards 12px) with a filled mono-weight inline-SVG icon (sun/gallery/tag/heart, currentColor ink, 20px) on a soft ink-tint chip, the pain named as a strong-tone Badge, an Inter-700 outcome title, and ONE tight sentence of specific, confident brand-voice proof copy (no lorem ipsum) — two free-text sizes/card (title+body), pain rides on the Badge → max-two-type honored. Reuses the established eyebrow-Badge + Inter-700-24px-title + slate-lede section header and the HowItWorks icon-chip pattern. Section on the white canvas (rhythm against the Gallery periwinkle wash), box-shadow none. Grid 1 → 2 → 2 cols (4 benefits as a 2×2). Typecheck, lint, build all pass; token-literal audit CLEAN. Browser-verified 390/768/1280 (white section no shadow, Inter-700 24px title, 4 cards each with icon+pain-Badge+outcome-title+sentence, cards --shadow-sm/12px, grid 1→2→2)."
     },
     {
       "id": "US-007",

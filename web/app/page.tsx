@@ -9,6 +9,7 @@
 import { Hero } from "./components/Hero";
 import { HowItWorks } from "./components/HowItWorks";
 import { Gallery } from "./components/Gallery";
+import { Benefits } from "./components/Benefits";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <Hero />
       <HowItWorks />
       <Gallery />
+      <Benefits />
     </main>
   );
 }

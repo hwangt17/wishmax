@@ -143,3 +143,35 @@ token-literal audit before marking any UI story done:
 - [x] Build passes: `cd web && npm run build`.
 - [x] Browser-verified (Playwright + system Chrome) at 390 / 768 / 1280
       (grid 2 → 3 → 4 columns): screenshots `/tmp/wm-us005-{mobile,tablet,desktop}.png`.
+
+### US-006 — Benefits / pain-point section
+
+- [x] Benefits section (`web/app/components/Benefits.tsx` + `benefits.css`,
+      rendered by `page.tsx` after `<Gallery/>`, `id="benefits"`) maps four
+      concrete, named pain points to Wishmax outcomes — each benefit maps to
+      exactly one pain point:
+      **Bad lighting** → "Studio-grade light on every shot";
+      **No good photos** → "A full lineup of scroll-stopping shots";
+      **Expensive photographers** → "Pro results without the pro price tag";
+      **Low matches** → "Photos that pull more right-swipes".
+- [x] Copy is specific and confident in the PRD-01 brand voice; no lorem ipsum
+      or placeholder filler. Each card names the pain as a strong ink-tint Badge
+      and answers it with the outcome title + one tight sentence of proof copy.
+- [x] Standard Content Cards (white surface, `--shadow-sm`, `--radius-cards`
+      12px), filled mono-weight icon (currentColor = ink, 20px) on a soft
+      ink-tint chip — reuses the HowItWorks icon-chip pattern. Two free-text
+      sizes per card (title + body); the pain rides on the Badge component.
+- [x] Section on the white canvas (rhythm against the Gallery's periwinkle wash
+      above), `box-shadow: none` on the section; title Inter 700 24px (NOT the
+      display face). Reuses the eyebrow-Badge + Inter-700-title + slate-lede
+      header pattern. Grid 1 → 2 → 2 columns (four benefits as a tidy 2×2).
+- [x] Token-only: token-literal audit on `Benefits.tsx` + `benefits.css` is
+      CLEAN (no hardcoded visual values).
+- [x] Typecheck passes: `cd web && npm run typecheck`.
+- [x] Lint passes: `cd web && npm run lint`.
+- [x] Build passes: `cd web && npm run build`.
+- [x] Browser-verified (Playwright + system Chrome) at 390 / 768 / 1280
+      (grid 1 → 2 → 2 columns; white section no shadow; 4 cards each with
+      icon + named-pain Badge + outcome title + one sentence; cards
+      `--shadow-sm` + 12px radius): screenshots
+      `/tmp/wm-us006-{mobile,tablet,desktop}.png`.

@@ -23,6 +23,7 @@
 @import "./components/hero.css";
 @import "./components/howitworks.css";
 @import "./components/gallery.css";
+@import "./components/benefits.css";
 
 html,
 body {
