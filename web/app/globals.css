@@ -42,6 +42,8 @@
   --radius-images: 12px;
   --radius-modals: 16px;
   --radius-full: 960px;
+  /* Proportional (em) radius for inline app-glyph icons that scale with font-size */
+  --radius-app-icon: 0.13em;
   --shadow-sm: rgba(0, 0, 0, 0.1) 0px 0px 6px 0px;
   --page-bg: var(--color-midnight-ink);
   --page-text: var(--color-pure-canvas);
@@ -57,6 +59,7 @@
   --form-width: 400px;
   --form-height: 60px;
   --footer-height: 72px;
+  --topbar-height: 96px;
 }
 
 * {
@@ -231,7 +234,7 @@ input {
   position: relative;
   z-index: 3;
   display: flex;
-  height: 96px;
+  height: var(--topbar-height);
   flex-shrink: 0;
   align-items: center;
   padding: 0 var(--spacing-40);
@@ -296,7 +299,7 @@ input {
   width: 0.78em;
   height: 0.78em;
   margin-right: 0.16em;
-  border-radius: var(--radius-images);
+  border-radius: var(--radius-app-icon);
   object-fit: cover;
   vertical-align: -0.04em;
 }
@@ -733,8 +736,24 @@ input {
     display: none;
   }
 
+  /* Phone rises from the top, top-aligned, as its own layer ABOVE the collage +
+     scrim background but BELOW the hero copy. Shown fully — no fade/mask on the
+     device itself. */
   .device-showcase {
-    display: none;
+    top: var(--spacing-80);
+    bottom: auto;
+    left: 50%;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  /* Device stays fully crisp and opaque — no fade/mask on the image itself. Its
+     lower body is hidden by the solid wash below, not made transparent. */
+  .device-frame {
+    width: min(76vw, 300px);
   }
 
   .mobile-scrim {
@@ -753,6 +772,25 @@ input {
     text-align: center;
   }
 
+  /* Legibility wash: a full-height layer ABOVE the phone (z 1) but below the
+     hero copy (z 2) and footer (z 3). SOLID black across the bottom so the copy
+     reads on a clean dark base and the device's lower body is cleanly hidden
+     (not foggily washed); a short soft blend at the top of the black melts the
+     device in without a hard line. Opaque to the very bottom edge — no footer
+     band. */
+  .landing-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 360px,
+      rgba(0, 0, 0, 0) 470px
+    );
+  }
+
   .copy-stack,
   .success-panel {
     width: 88vw;
@@ -765,6 +803,10 @@ input {
   .form-error {
     margin-right: auto;
     margin-left: auto;
+  }
+
+  .hero-stat {
+    justify-content: center;
   }
 
   .landing-footer {
@@ -790,11 +832,6 @@ input {
 
   .mobile-title {
     display: inline;
-  }
-
-  .copy-stack,
-  .success-panel {
-    transform: translateX(-36px);
   }
 
   .collage-grid {

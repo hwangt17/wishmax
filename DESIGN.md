@@ -91,7 +91,7 @@ Two component specs (badge, ghost button) call for sizes outside the core scale.
 
 **Spacing scale (px):** 4 · 6 · 8 · 10 · 12 · 16 · 20 · 24 · 30 · 40 · 60 · 80 · 100 · 120 · 160 (tokens `--spacing-{n}`).
 
-**Border radius:** cards 12 · images 12 · inputs 8 · buttons 8 · modals 16 · nav pills 4 · badges/pills **960** (full). Tokens `--radius-{role}`.
+**Border radius:** cards 12 · images 12 · inputs 8 · buttons 8 · modals 16 · nav pills 4 · badges/pills **960** (full). Tokens `--radius-{role}`. For inline app-glyph icons that scale with font-size (e.g. the rotating dating-app logo in the hero), use the proportional `--radius-app-icon` (0.13em) so the squircle stays visually consistent at any type size — never a fixed px radius, which reads as over-rounded when the icon shrinks on mobile.
 
 **Shadows:** `--shadow-sm: rgba(0,0,0,0.1) 0px 0px 6px 0px` · `--shadow-lg: rgba(0,0,0,0.1) 0px 0px 20px 0px`. Elevated cards may stack the multi-layer `rgba(0,0,0,0.05)` shadow (0.8px → 60px spread).
 
@@ -240,6 +240,7 @@ One source → both platforms. Keep these in sync with the tables above:
   --radius-navpills: 4px; --radius-buttons: 8px; --radius-inputs: 8px;
   --radius-cards: 12px; --radius-images: 12px; --radius-modals: 16px;
   --radius-badges: 960px; --radius-full: 960px;
+  --radius-app-icon: 0.13em;
 
   /* Shadows */
   --shadow-sm: rgba(0,0,0,0.1) 0px 0px 6px 0px;

@@ -61,6 +61,8 @@
   --radius-navpills: 4px; --radius-buttons: 8px; --radius-inputs: 8px;
   --radius-cards: 12px; --radius-images: 12px; --radius-modals: 16px;
   --radius-badges: 960px; --radius-full: 960px;
+  /* Proportional radius for inline app-glyph icons that scale with font-size (em, not px) */
+  --radius-app-icon: 0.13em;
 
   /* Shadows */
   --shadow-sm: rgba(0, 0, 0, 0.1) 0px 0px 6px 0px;
