@@ -11,12 +11,8 @@
 import { useState } from "react";
 import { CtaLink } from "./CtaLink";
 
-/** Nav targets anchor the sections built in later PRD-02 stories. */
-const NAV_LINKS = [
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#examples", label: "Examples" },
-  { href: "#faq", label: "FAQ" },
-];
+/** Nav targets anchor the page's sections. */
+const NAV_LINKS = [{ href: "#examples", label: "Examples" }];
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);

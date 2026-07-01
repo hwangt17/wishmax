@@ -4,7 +4,7 @@
  * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
  * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
  * Section sits on the periwinkle wash (surface only) for the alternating
- * white/wash rhythm (the FAQ above is on the white canvas); it carries NO
+ * white/wash rhythm (the Gallery above is on the white canvas); it carries NO
  * box-shadow itself (elevation is cards-only).
  *
  * Action system stays black & white — the input focus ring, error border, and

@@ -21,11 +21,7 @@
 @import "./components/showcase.css";
 /* Landing sections. */
 @import "./components/hero.css";
-@import "./components/howitworks.css";
 @import "./components/gallery.css";
-@import "./components/benefits.css";
-@import "./components/socialproof.css";
-@import "./components/faq.css";
 @import "./components/waitlist.css";
 
 html,

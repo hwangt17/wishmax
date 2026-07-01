@@ -1,15 +1,17 @@
 /*
- * Hero section styling (US-003).
+ * Hero section styling.
  *
  * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
  * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
- * Mobile-first single column; two columns from the tablet breakpoint up. The
- * section sits on the periwinkle→white wash surface (a gradient on a SURFACE,
- * never on an interactive element — per DESIGN.md). No box-shadow on this
- * full-bleed section (elevation is for cards only).
  *
- * Non-visual literals only: max-width content measures (ch), 1fr grid tracks,
- * media-query breakpoints.
+ * Editorial & airy: a centered single column with generous vertical rhythm — an
+ * eyebrow badge, an oversized statement headline, one tight subhead, the inline
+ * email form, then an oversized before/after proof. The section sits on the
+ * periwinkle→white wash (a gradient on a SURFACE, never on an interactive
+ * element) and carries NO box-shadow (elevation is cards only).
+ *
+ * Non-visual literals only: content-measure max-widths (ch / rem), the
+ * before/after max-width, and the media-query breakpoints.
  */
 
 .wm-hero {
@@ -19,11 +21,11 @@
 .wm-hero__inner {
   max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: var(--spacing-60) var(--spacing-24) var(--spacing-80);
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-40);
+  padding: var(--spacing-80) var(--spacing-24) var(--spacing-100);
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: var(--spacing-60);
 }
 
 /* ------------------------------------------------------------------ Copy -- */
@@ -31,16 +33,19 @@
 .wm-hero__copy {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--spacing-20);
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-24);
+  width: 100%;
 }
 
 .wm-hero__eyebrow {
   display: inline-flex;
 }
 
-/* Hook headline — the one place Space Grotesk display face is licensed to run
-   (≥ 26px). Sized up on wider viewports via the breakpoint below. */
+/* Hook headline — the one place the Space Grotesk display face is licensed to
+   run (≥ 26px). Tight measure keeps the statement punchy; sized up at the
+   breakpoint below. */
 .wm-hero__title {
   margin: 0;
   font-family: var(--font-display);
@@ -49,7 +54,7 @@
   letter-spacing: var(--tracking-heading-lg);
   font-weight: var(--font-weight-medium);
   color: var(--color-midnight-ink);
-  max-width: 18ch;
+  max-width: 15ch;
 }
 
 .wm-hero__subhead {
@@ -58,21 +63,28 @@
   line-height: var(--leading-heading-sm);
   letter-spacing: var(--tracking-heading-sm);
   color: var(--color-slate);
-  max-width: 46ch;
+  max-width: 42ch;
 }
 
-.wm-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-12);
+/* Inline email capture — centered, constrained measure. text-align centers the
+   feedback + microcopy under the field/button row. */
+.wm-hero__form {
+  width: 100%;
+  max-width: 34rem;
+  text-align: center;
 }
 
-.wm-hero__microcopy {
-  margin: 0;
-  font-size: var(--text-caption);
-  line-height: var(--leading-caption);
-  letter-spacing: var(--tracking-caption);
-  color: var(--color-ash);
+/* The shared WaitlistForm spaces itself for the closing section; in the hero the
+   copy column's gap already provides the rhythm, and the block-level feedback /
+   microcopy / success card are centered under the row. */
+.wm-hero__form .wm-waitlist__form {
+  margin-top: 0;
+}
+
+.wm-hero__form .wm-waitlist__microcopy,
+.wm-hero__form .wm-waitlist__success {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ---------------------------------------------------------------- Visual -- */
@@ -82,8 +94,8 @@
   flex-direction: column;
   gap: var(--spacing-12);
   width: 100%;
-  /* Fills the column — the before/after proof is the hero's credibility anchor,
-     so it stays prominent on mobile rather than shrinking. */
+  max-width: 34rem;
+  margin: 0;
 }
 
 .wm-hero__caption {
@@ -99,14 +111,15 @@
 
 @media (min-width: 768px) {
   .wm-hero__inner {
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: var(--spacing-60);
-    padding-top: var(--spacing-80);
+    padding-top: var(--spacing-100);
+    padding-bottom: var(--spacing-120);
+    gap: var(--spacing-80);
   }
 
   .wm-hero__title {
     font-size: var(--text-display);
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
+    max-width: 16ch;
   }
 }

@@ -54,16 +54,6 @@ const SAMPLES: Sample[] = [
     alt: "Sample Wishmax result — a bright coastal travel portrait in relaxed linen",
   },
   {
-    src: "/gallery/gym-2.jpg",
-    category: "Gym",
-    alt: "Sample Wishmax result — a cool teal gym portrait in a fitted training top",
-  },
-  {
-    src: "/gallery/professional-2.jpg",
-    category: "Professional",
-    alt: "Sample Wishmax result — a warm-grey studio professional portrait in a charcoal blazer",
-  },
-  {
     src: "/gallery/night-out-2.jpg",
     category: "Night out",
     alt: "Sample Wishmax result — a violet-lit night-out portrait in a dark shirt",
@@ -82,9 +72,8 @@ export function Gallery() {
             One face, every vibe worth swiping right on.
           </h2>
           <p className="wm-gallery__lede">
-            Browse the kind of profile-ready shots Wishmax makes from your own
-            selfies — travel, gym, professional, night-out. Pick the looks you
-            like; your face goes in every one.
+            Travel, gym, professional, night-out — pick the looks you like, and
+            your face goes in every one.
           </p>
         </header>
 
@@ -95,7 +84,7 @@ export function Gallery() {
                 src={sample.src}
                 alt={sample.alt}
                 category={sample.category}
-                sizes="(max-width: 599px) 45vw, (max-width: 1023px) 30vw, 260px"
+                sizes="(max-width: 599px) 45vw, (max-width: 1023px) 30vw, 180px"
               />
             </li>
           ))}

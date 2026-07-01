@@ -4,17 +4,17 @@
  * SOURCE OF TRUTH: ../../../DESIGN.md via the tokens imported in globals.css.
  * Every color, size, radius, spacing, weight and shadow is a var(--…) token.
  * The gallery mirrors the app's feed: a responsive grid of Feed Photo Tiles
- * (3:4, radius-images, category chip over a scrim) on the periwinkle→white wash
- * surface — the alternating gradient-wash rhythm from DESIGN.md (this section
- * sits between the white "How it works" section and the following white ones).
- * The section carries NO box-shadow (elevation is cards/tiles only).
+ * (3:4, radius-images, category chip over a scrim). It sits on the white canvas
+ * so the page alternates wash → white → wash (Hero wash · Gallery white ·
+ * Waitlist wash) per DESIGN.md's rhythm. The section carries NO box-shadow
+ * (elevation is cards/tiles only).
  *
  * Mobile-first: two tile columns; three from the tablet breakpoint, four from
  * desktop. Non-visual literals only: 1fr grid tracks, ch measures, breakpoints.
  */
 
 .wm-gallery {
-  background-image: var(--gradient-sky-periwinkle);
+  background: var(--surface-canvas);
 }
 
 .wm-gallery__inner {
@@ -87,13 +87,14 @@
 @media (min-width: 768px) {
   .wm-gallery__grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-20);
+    gap: var(--spacing-16);
   }
 }
 
+/* Desktop: a single-row proof strip — the six looks read at a glance. */
 @media (min-width: 1024px) {
   .wm-gallery__grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-20);
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--spacing-16);
   }
 }

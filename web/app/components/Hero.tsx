@@ -1,20 +1,19 @@
 /*
- * Hero section (US-003) — the hook + the before/after proof.
+ * Hero section — the hook, the inline email capture, and the before/after proof.
  *
- * Leads with the brand hook headline, names the pain (your photos cost you
- * matches) and the promise (pro dating photos from your own face, no
- * photoshoot), keeps the primary CTA above the fold, and proves it with the
- * PRD-01 Before/After card (the primary credibility component). The card's
- * images are the above-the-fold LCP — rendered via next/image with `priority`
- * (preloaded) inside fixed 3:4 tiles, so there's no layout shift on load.
+ * Editorial & airy: a centered statement headline (the one place the Space
+ * Grotesk display face is licensed to run, ≥ 26px), one tight subhead, the
+ * inline <WaitlistForm> as the primary action, and an oversized Before/After
+ * card as the credibility anchor. The card's images are the above-the-fold LCP
+ * — next/image with `priority` (preloaded) inside fixed 3:4 tiles, so there's no
+ * layout shift on load.
  *
- * Token-only: layout/spacing/type/color come from var(--…) tokens via
- * ./hero.css and the ported components; no hardcoded visual values here.
+ * Token-only: layout/spacing/type/color come from var(--…) tokens via ./hero.css
+ * and the ported components; no hardcoded visual values here.
  */
 import { Badge } from "./Badge";
 import { BeforeAfterCard } from "./BeforeAfterCard";
-import { ButtonLink } from "./Button";
-import { CtaLink } from "./CtaLink";
+import { WaitlistForm } from "./WaitlistForm";
 
 export function Hero() {
   return (
@@ -22,7 +21,7 @@ export function Hero() {
       <div className="wm-hero__inner">
         <div className="wm-hero__copy">
           <span className="wm-hero__eyebrow">
-            <Badge>Pro dating photos from your own face</Badge>
+            <Badge>Early access — join the waitlist</Badge>
           </span>
 
           <h1 id="wm-hero-title" className="wm-hero__title">
@@ -30,35 +29,27 @@ export function Hero() {
           </h1>
 
           <p className="wm-hero__subhead">
-            Your photos are costing you matches. Wishmax turns a few selfies
-            into pro dating photos from your own face — no photoshoot, no
-            awkward camera guy, no waiting weeks.
+            Wishmax turns a few selfies into pro dating photos from your own
+            face — no photoshoot required.
           </p>
 
-          <div className="wm-hero__actions">
-            <CtaLink location="hero" />
-            <ButtonLink href="#examples" variant="ghost">
-              See the transformations
-            </ButtonLink>
+          <div className="wm-hero__form">
+            <WaitlistForm source="hero" />
           </div>
-
-          <p className="wm-hero__microcopy">
-            Join the waitlist — be first in line when Wishmax launches.
-          </p>
         </div>
 
-        <div className="wm-hero__visual">
+        <figure className="wm-hero__visual">
           <BeforeAfterCard
             beforeSrc="/hero/before.jpg"
             afterSrc="/hero/after.jpg"
             alt="A Wishmax transformation — a dull phone selfie becomes a bright, professionally styled portrait"
             priority
-            sizes="(max-width: 899px) 45vw, 300px"
+            sizes="(max-width: 767px) 44vw, 280px"
           />
-          <p className="wm-hero__caption">
+          <figcaption className="wm-hero__caption">
             Sample transformation — real member results at launch.
-          </p>
-        </div>
+          </figcaption>
+        </figure>
       </div>
     </section>
   );
