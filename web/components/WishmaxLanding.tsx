@@ -178,7 +178,7 @@ export function WishmaxLanding() {
         revealTimer = setTimeout(() => {
           setIsMobilePhoneRevealed(true)
           revealTimer = null
-        }, 3000)
+        }, 2000)
       } else {
         setIsMobilePhoneRevealed(false)
       }

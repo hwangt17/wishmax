@@ -546,19 +546,19 @@ input {
     transform: rotate(0deg) translate3d(0, 0, 0);
   }
   9% {
-    transform: rotate(-0.35deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
-  }
-  20% {
-    transform: rotate(0.35deg) translate3d(var(--spacing-4), 0, 0);
-  }
-  31% {
     transform: rotate(-0.22deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
   }
+  20% {
+    transform: rotate(0.22deg) translate3d(var(--spacing-4), 0, 0);
+  }
+  31% {
+    transform: rotate(-0.14deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
   42% {
-    transform: rotate(0.16deg) translate3d(var(--spacing-4), 0, 0);
+    transform: rotate(0.1deg) translate3d(var(--spacing-4), 0, 0);
   }
   53% {
-    transform: rotate(-0.08deg) translate3d(0, 0, 0);
+    transform: rotate(-0.05deg) translate3d(0, 0, 0);
   }
 }
 
@@ -990,6 +990,7 @@ input {
      lower body is hidden by the solid wash below, not made transparent. */
   .device-frame {
     width: min(76vw, 300px);
+    animation: device-buzz 1.4s ease-in-out infinite;
   }
 
   .device-frame.is-mobile-revealed {
@@ -1056,6 +1057,15 @@ input {
     justify-content: center;
     padding: 0 var(--spacing-24) var(--spacing-20);
     text-align: center;
+  }
+}
+
+/* Honor reduced-motion for the mobile device shakes, which override the
+   earlier guard by source order and specificity. */
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .device-frame,
+  .device-frame.is-mobile-revealed {
+    animation: none;
   }
 }
 
