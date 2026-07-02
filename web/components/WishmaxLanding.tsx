@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
 import Link from "next/link"
 import { Heart, TrendingUp } from "lucide-react"
 
@@ -16,9 +16,42 @@ const DATING_APPS = [
 const APP_ROTATE_MS = 2600
 // Point this at the App Store / Play Store listing when it's live.
 const APP_STORE_URL = "#"
-// Drop a before/after Hinge screenshot here (e.g. "/devices/hinge-before-after.png")
-// to replace the placeholder shown inside the phone.
-const DEVICE_SCREENSHOT: string | null = null
+// Hinge profile shown inside the phone: the raw "before" is on top by default
+// and cross-fades to the larped "after" when the phone is hovered.
+const HINGE_BEFORE = "/placeholder-hinge-screenshots/Bad.png"
+const HINGE_AFTER = "/placeholder-hinge-screenshots/Good.png"
+// Hearts that stream up over the phone on hover. Delays spread across the full
+// loop (so the flow is continuous, never a synced burst), each with its own
+// speed, size, and horizontal sway so they drift like real floating hearts.
+const HEART_BUBBLES = [
+  { left: "12%", delay: "0ms", duration: "2600ms", size: "var(--spacing-16)", drift: "var(--spacing-12)" },
+  { left: "20%", delay: "900ms", duration: "3000ms", size: "var(--spacing-24)", drift: "calc(-1 * var(--spacing-16))" },
+  { left: "28%", delay: "1800ms", duration: "2400ms", size: "var(--spacing-20)", drift: "var(--spacing-20)" },
+  { left: "36%", delay: "400ms", duration: "3200ms", size: "var(--spacing-16)", drift: "calc(-1 * var(--spacing-8))" },
+  { left: "44%", delay: "1300ms", duration: "2800ms", size: "var(--spacing-24)", drift: "var(--spacing-8)" },
+  { left: "52%", delay: "2200ms", duration: "2200ms", size: "var(--spacing-20)", drift: "calc(-1 * var(--spacing-20))" },
+  { left: "58%", delay: "600ms", duration: "3000ms", size: "var(--spacing-16)", drift: "var(--spacing-16)" },
+  { left: "66%", delay: "1600ms", duration: "2600ms", size: "var(--spacing-24)", drift: "calc(-1 * var(--spacing-12))" },
+  { left: "72%", delay: "300ms", duration: "3400ms", size: "var(--spacing-20)", drift: "var(--spacing-12)" },
+  { left: "80%", delay: "2000ms", duration: "2400ms", size: "var(--spacing-16)", drift: "calc(-1 * var(--spacing-16))" },
+  { left: "24%", delay: "2600ms", duration: "2800ms", size: "var(--spacing-20)", drift: "var(--spacing-16)" },
+  { left: "48%", delay: "3000ms", duration: "3000ms", size: "var(--spacing-24)", drift: "calc(-1 * var(--spacing-8))" },
+  { left: "62%", delay: "2400ms", duration: "2600ms", size: "var(--spacing-16)", drift: "var(--spacing-20)" },
+  { left: "76%", delay: "3400ms", duration: "3200ms", size: "var(--spacing-20)", drift: "calc(-1 * var(--spacing-12))" },
+]
+// iOS-style push banners that drop in on hover — the "likes rolling in" proof.
+// Matches the native layout: app icon, bold title + time on line 1, message on
+// line 2. Delays are staggered tightly so they stack like a real notification flood.
+const PHONE_NOTIFICATIONS = [
+  { title: "Hinge", text: "Emma liked your photo", time: "now", delay: "0ms" },
+  { title: "Hinge", text: "Sofia liked your prompt", time: "now", delay: "650ms" },
+  { title: "Hinge", text: "You matched with Chloe 🎉", time: "now", delay: "1300ms" },
+  { title: "Hinge", text: "Maya sent you a rose", time: "now", delay: "1950ms" },
+  { title: "Hinge", text: "Ava wants to chat", time: "now", delay: "2600ms" },
+  { title: "Hinge", text: "Nora liked your answer", time: "now", delay: "3250ms" },
+  { title: "Hinge", text: "Lily matched with you", time: "now", delay: "3900ms" },
+  { title: "Hinge", text: "Zoe liked your profile", time: "now", delay: "4550ms" },
+]
 
 function getColumnCount() {
   if (typeof window === "undefined") return DEFAULT_COLS
@@ -41,6 +74,7 @@ export function WishmaxLanding() {
   const [colsCount, setColsCount] = useState(DEFAULT_COLS)
   const [layoutVersion, setLayoutVersion] = useState(0)
   const [appIndex, setAppIndex] = useState(0)
+  const [isMobilePhoneRevealed, setIsMobilePhoneRevealed] = useState(false)
 
   const countRef = useRef(0)
   const animationRef = useRef<number | null>(null)
@@ -130,6 +164,33 @@ export function WishmaxLanding() {
       setAppIndex((current) => (current + 1) % DATING_APPS.length)
     }, APP_ROTATE_MS)
     return () => clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 1023px)")
+    let revealTimer: ReturnType<typeof setTimeout> | null = null
+
+    const applyMobileReveal = () => {
+      if (revealTimer) clearTimeout(revealTimer)
+
+      if (mobileQuery.matches) {
+        setIsMobilePhoneRevealed(false)
+        revealTimer = setTimeout(() => {
+          setIsMobilePhoneRevealed(true)
+          revealTimer = null
+        }, 3000)
+      } else {
+        setIsMobilePhoneRevealed(false)
+      }
+    }
+
+    applyMobileReveal()
+    mobileQuery.addEventListener("change", applyMobileReveal)
+
+    return () => {
+      if (revealTimer) clearTimeout(revealTimer)
+      mobileQuery.removeEventListener("change", applyMobileReveal)
+    }
   }, [])
 
   const columns = useMemo(() => {
@@ -239,38 +300,49 @@ export function WishmaxLanding() {
       </section>
 
       <aside className="device-showcase" aria-hidden="true">
-        <div className="device-frame">
+        <div className={isMobilePhoneRevealed ? "device-frame is-mobile-revealed" : "device-frame"}>
           <div className="device-screen">
-            {DEVICE_SCREENSHOT ? (
-              <img className="device-screenshot" src={DEVICE_SCREENSHOT} alt="" />
-            ) : (
-              <div className="hinge-profile">
-                <div className="hinge-photo hinge-photo-hero">
-                  <div className="hinge-scrim" />
-                  <div className="hinge-name">
-                    <span className="hinge-name-main">Alex, 27</span>
-                    <span className="hinge-name-sub">6 miles away · Verified</span>
+            <div className="device-swap">
+              <img className="device-shot device-shot-after" src={HINGE_AFTER} alt="" loading="lazy" decoding="async" />
+              <img className="device-shot device-shot-before" src={HINGE_BEFORE} alt="" decoding="async" />
+            </div>
+            <div className="heart-bubbles" aria-hidden="true">
+              {HEART_BUBBLES.map((bubble, index) => (
+                <span
+                  key={index}
+                  className="heart-bubble"
+                  style={
+                    {
+                      left: bubble.left,
+                      "--bubble-delay": bubble.delay,
+                      "--bubble-duration": bubble.duration,
+                      "--bubble-size": bubble.size,
+                      "--bubble-drift": bubble.drift,
+                    } as CSSProperties
+                  }
+                >
+                  <Heart fill="currentColor" aria-hidden="true" />
+                </span>
+              ))}
+            </div>
+            <div className="phone-notifications" aria-hidden="true">
+              {PHONE_NOTIFICATIONS.map((notif, index) => (
+                <div
+                  key={index}
+                  className="phone-notif"
+                  style={{ "--notif-delay": notif.delay } as CSSProperties}
+                >
+                  <img className="phone-notif-icon" src="/dating-apps/hinge.jpg" alt="" />
+                  <div className="phone-notif-body">
+                    <div className="phone-notif-head">
+                      <span className="phone-notif-title">{notif.title}</span>
+                      <span className="phone-notif-time">{notif.time}</span>
+                    </div>
+                    <span className="phone-notif-text">{notif.text}</span>
                   </div>
-                  <span className="hinge-like">
-                    <Heart fill="currentColor" aria-hidden="true" />
-                  </span>
                 </div>
-                <div className="hinge-prompt">
-                  <span className="hinge-prompt-label">The way to win me over is</span>
-                  <p className="hinge-prompt-answer">
-                    A good coffee, a better playlist, and zero small talk.
-                  </p>
-                  <span className="hinge-like hinge-like-inline">
-                    <Heart fill="currentColor" aria-hidden="true" />
-                  </span>
-                </div>
-                <div className="hinge-photo hinge-photo-secondary">
-                  <span className="hinge-like">
-                    <Heart fill="currentColor" aria-hidden="true" />
-                  </span>
-                </div>
-              </div>
-            )}
+              ))}
+            </div>
           </div>
           <img
             className="device-mockup"

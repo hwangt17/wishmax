@@ -224,3 +224,27 @@ Previous run archived to archive/2026-06-30-initial-scaffold/
   - The enforcement now lives in three layers: instruction (CLAUDE.md + AGENTS.md, read DESIGN.md every loop), memory (this Codebase Patterns line), and review (checklist.md standing reviewer gate). Keep all three in sync if the design rule ever changes.
   - PRD-01 (Design System) is complete: all 9 stories pass. Next is PRD-02 (Landing Page, ralph/landing-page) or PRD-03 (App MVP, ralph/app-mvp), both of which consume design/tokens.css (web) / design/theme.ts + design/fonts/ (RN).
 ---
+
+## [2026-07-02] - Marketing website dev runtime fix
+- Investigated: `TypeError: __webpack_modules__[moduleId] is not a function` on `/` during local Next dev.
+- Root cause: multiple stale `next dev` processes from `web/` were running on different ports while sharing the same `.next` build cache, which can leave the webpack module table out of sync.
+- Implemented: killed stale dev servers, removed `web/.next`, pinned `web/package.json` `dev` to `next dev --port 3017`, and added `dev:any` for intentionally running an unpinned Next dev server.
+- Checks run (cd web):
+  - `npm run typecheck` → clean.
+  - `npm run lint` → passes with existing `@next/next/no-img-element` warnings in `WishmaxLanding.tsx`.
+  - `rm -rf .next && npm run build` → clean production build.
+- Runtime evidence: started one dev server via `npm run dev` on http://localhost:3017; eight consecutive `GET /` requests returned 200 with no webpack runtime error.
+- Learnings for future iterations:
+  - For the marketing site, prefer one active Next dev server on port 3017. If the webpack module-table error appears, stop duplicate dev processes and clear `web/.next` before restarting.
+  - `npm run dev` now follows the documented AGENTS.md port; use `npm run dev:any` only when intentionally choosing another port.
+
+## [2026-07-02] - Marketing mobile phone reveal
+- Implemented: Mobile/tablet landing view now automatically switches the phone mockup to the good screenshot after 3 seconds, then starts the same floating hearts, iOS-style stacked notifications, and soft phone vibration used by the hover reveal.
+- Files changed:
+  - `web/components/WishmaxLanding.tsx` — added a mobile media-query timer and `is-mobile-revealed` state on the device frame.
+  - `web/app/globals.css` — reused the existing hover selectors for the mobile reveal state and added mobile vibration for the revealed phone.
+- Checks run (cd web):
+  - `npm run typecheck` → clean.
+  - `npm run lint` → passes with existing `@next/next/no-img-element` warnings in `WishmaxLanding.tsx`.
+  - `rm -rf .next && npm run build` → clean production build.
+- Browser evidence: verified at 390×844 on http://localhost:3017. At 1s: device frame has no reveal class, before-shot opacity `1`, hearts/notifications animation `none`. After the 3s delay: frame has `is-mobile-revealed`, before-shot opacity `0`, hearts use `heart-bubble-rise`, notifications use `phone-notif-stack`, and frame uses `device-notification-vibrate`. Console had 0 current errors/warnings after the clean server restart.

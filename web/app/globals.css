@@ -8,6 +8,7 @@
   --color-hot-pink: #ff3d8b;
   --color-match-gain: #31c431;
   --color-match-gain-soft: rgba(49, 196, 49, 0.18);
+  --color-ash: #999999;
   --color-fog: #b3b3b3;
   --color-slate: #666666;
   /* CTA accent */
@@ -19,8 +20,11 @@
   --text-ui-lg: 16px;
   --leading-body: 1.4;
   --leading-heading: 1.2;
+  --leading-caption: 1.2;
+  --leading-label: 1.2;
   --tracking-body: -0.28px;
   --tracking-heading: -0.96px;
+  --tracking-caption: -0.22px;
   --tracking-display: -0.96px;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -42,12 +46,14 @@
   --text-label: 12px;
   --surface-tint-soft: rgba(0, 0, 0, 0.05);
   --surface-tint-strong: rgba(0, 0, 0, 0.2);
+  --radius-inputs: 8px;
   --radius-images: 12px;
   --radius-modals: 16px;
   --radius-full: 960px;
   /* Proportional (em) radius for inline app-glyph icons that scale with font-size */
   --radius-app-icon: 0.13em;
   --shadow-sm: rgba(0, 0, 0, 0.1) 0px 0px 6px 0px;
+  --shadow-lg: rgba(0, 0, 0, 0.1) 0px 0px 20px 0px;
   --page-bg: var(--color-midnight-ink);
   --page-text: var(--color-pure-canvas);
   --page-muted: rgba(255, 255, 255, 0.72);
@@ -227,8 +233,16 @@ input {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tile-flip {
+  .tile-flip,
+  .device-shot-before {
     transition: none;
+  }
+
+  .device-screen:hover .heart-bubble,
+  .device-screen:hover .phone-notif,
+  .device-frame.is-mobile-revealed .heart-bubble,
+  .device-frame.is-mobile-revealed .phone-notif {
+    animation: none;
   }
 }
 
@@ -483,6 +497,77 @@ input {
   filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
 }
 
+/* Idle "buzz" — a subtle periodic shake to signal the phone is interactive.
+   On hover, a softer push-notification vibration syncs with each incoming card. */
+@media (hover: hover) and (pointer: fine) {
+  .device-frame {
+    animation: device-buzz 1.4s ease-in-out infinite;
+  }
+
+  .device-frame:has(.device-screen:hover) {
+    animation: device-notification-vibrate 650ms ease-in-out infinite;
+  }
+}
+
+/* Subtle idle buzz over the back half of the loop, then rests. */
+@keyframes device-buzz {
+  0%, 46%, 100% {
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+  51% {
+    transform: rotate(-1.1deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
+  57% {
+    transform: rotate(1.1deg) translate3d(var(--spacing-4), 0, 0);
+  }
+  63% {
+    transform: rotate(-0.8deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
+  69% {
+    transform: rotate(0.7deg) translate3d(var(--spacing-4), 0, 0);
+  }
+  75% {
+    transform: rotate(-0.45deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
+  81% {
+    transform: rotate(0.3deg) translate3d(var(--spacing-4), 0, 0);
+  }
+  87% {
+    transform: rotate(-0.18deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
+  93% {
+    transform: rotate(0.08deg) translate3d(0, 0, 0);
+  }
+}
+
+/* Soft vibration for each notification: tiny side-to-side movement, quick decay. */
+@keyframes device-notification-vibrate {
+  0%, 64%, 100% {
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+  9% {
+    transform: rotate(-0.35deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
+  20% {
+    transform: rotate(0.35deg) translate3d(var(--spacing-4), 0, 0);
+  }
+  31% {
+    transform: rotate(-0.22deg) translate3d(calc(-1 * var(--spacing-4)), 0, 0);
+  }
+  42% {
+    transform: rotate(0.16deg) translate3d(var(--spacing-4), 0, 0);
+  }
+  53% {
+    transform: rotate(-0.08deg) translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device-frame {
+    animation: none;
+  }
+}
+
 /* Screenshot sits behind the frame, inset to the transparent screen cutout */
 .device-screen {
   position: absolute;
@@ -493,111 +578,236 @@ input {
   overflow: hidden;
   border-radius: var(--radius-images);
   background: var(--color-pure-canvas);
+  /* Re-enable hover here; the .device-showcase wrapper is pointer-events:none */
+  pointer-events: auto;
 }
 
-.device-screenshot {
+.device-swap {
+  position: absolute;
+  inset: 0;
+}
+
+.device-shot {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Full-screen Hinge-profile mock (placeholder until a real screenshot is dropped in) */
-.hinge-profile {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  background: var(--color-pure-canvas);
-  font-family: var(--font-sans);
+/* "before" (raw) sits on top by default and fades away on hover, revealing "after" */
+.device-shot-before {
+  opacity: 1;
+  transition: opacity 600ms ease;
 }
 
-.hinge-photo {
-  position: relative;
-  flex-shrink: 0;
-  background: linear-gradient(160deg, var(--surface-tint-soft), var(--surface-tint-strong));
+.device-screen:hover .device-shot-before {
+  opacity: 0;
 }
 
-.hinge-photo-hero {
-  height: 48%;
+.device-frame.is-mobile-revealed .device-shot-before {
+  opacity: 0;
 }
 
-.hinge-photo-secondary {
-  flex: 1;
-  min-height: 0;
-}
-
-.hinge-scrim {
+/* Hearts that bubble up over the phone on hover — the "likes rolling in" cue
+   that reinforces the raw→larped swap. Purely decorative, so pointer-events off. */
+.heart-bubbles {
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 42%);
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
 }
 
-.hinge-name {
+.heart-bubble {
   position: absolute;
-  bottom: var(--spacing-16);
-  left: var(--spacing-16);
+  bottom: 0;
+  display: inline-flex;
+  color: var(--color-hot-pink);
+  opacity: 0;
+  will-change: bottom, transform, opacity;
+}
+
+.heart-bubble svg {
+  width: var(--bubble-size, var(--spacing-20));
+  height: var(--bubble-size, var(--spacing-20));
+  fill: currentColor;
+  filter: drop-shadow(var(--shadow-sm));
+}
+
+.device-screen:hover .heart-bubble {
+  animation: heart-bubble-rise var(--bubble-duration, 2800ms) ease-in-out
+    var(--bubble-delay, 0ms) infinite;
+}
+
+.device-frame.is-mobile-revealed .heart-bubble {
+  animation: heart-bubble-rise var(--bubble-duration, 2800ms) ease-in-out
+    var(--bubble-delay, 0ms) infinite;
+}
+
+/* Rise the full height of the screen (animating `bottom`, so travel is relative
+   to the screen — not each heart's own size) while swaying left/right via
+   --bubble-drift, so the stream reads as hearts floating up. */
+@keyframes heart-bubble-rise {
+  0% {
+    bottom: 2%;
+    opacity: 0;
+    transform: translateX(0) scale(0.4) rotate(-10deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(var(--bubble-drift, 0px)) scale(1.05) rotate(-6deg);
+  }
+  82% {
+    opacity: 0.8;
+  }
+  100% {
+    bottom: 98%;
+    opacity: 0;
+    transform: translateX(0) scale(1.2) rotate(-4deg);
+  }
+}
+
+/* iOS-style push banners that flood in from the top on hover — the newest card
+   lands full-size while older notifications tuck into a compressed stack. */
+.phone-notifications {
+  position: absolute;
+  /* Clip to a region starting below the iOS status bar / dynamic island, so the
+     banner slides down from just under it and never overlaps the clock. */
+  top: 7%;
+  left: var(--spacing-12);
+  right: var(--spacing-12);
+  height: 34%;
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.phone-notif {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-10);
+  /* iOS banners are a very rounded frosted-material capsule */
+  border-radius: var(--radius-modals);
+  background: color-mix(in srgb, var(--color-pure-canvas) 86%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(var(--spacing-120)) scale(0.86);
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+/* Squircle app icon on the left */
+.phone-notif-icon {
+  width: calc(var(--spacing-16) + var(--spacing-16));
+  height: calc(var(--spacing-16) + var(--spacing-16));
+  flex-shrink: 0;
+  border-radius: var(--radius-inputs);
+  object-fit: cover;
+}
+
+.phone-notif-body {
+  display: flex;
+  min-width: 0;
+  flex: 1;
   flex-direction: column;
   gap: var(--spacing-4);
-  color: var(--color-pure-canvas);
 }
 
-.hinge-name-main {
-  font-size: var(--text-heading);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--tracking-heading);
-  line-height: 1;
-}
-
-.hinge-name-sub {
-  font-size: var(--text-label);
-  font-weight: var(--font-weight-medium);
-  opacity: 0.9;
-}
-
-.hinge-prompt {
-  position: relative;
+/* Line 1: bold title (left) + timestamp (right), baseline-aligned */
+.phone-notif-head {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--spacing-8);
-  padding: var(--spacing-20) var(--spacing-16) var(--spacing-24);
 }
 
-.hinge-prompt-label {
+/* Two type sizes only (title/message = label, time = caption) per DESIGN.md */
+.phone-notif-title {
   color: var(--color-midnight-ink);
   font-size: var(--text-label);
-  font-weight: var(--font-weight-semibold);
-  opacity: 0.55;
-}
-
-.hinge-prompt-answer {
-  margin: 0;
-  color: var(--color-midnight-ink);
-  font-size: var(--text-ui-lg);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-body);
-  line-height: 1.3;
+  line-height: var(--leading-label);
 }
 
-.hinge-like {
-  position: absolute;
-  right: var(--spacing-12);
-  bottom: var(--spacing-12);
-  display: inline-flex;
-  width: var(--spacing-40);
-  height: var(--spacing-40);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-full);
-  background: var(--color-pure-canvas);
-  color: var(--color-hot-pink);
-  box-shadow: var(--shadow-sm);
+.phone-notif-time {
+  flex-shrink: 0;
+  color: var(--color-ash);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-caption);
+  line-height: var(--leading-caption);
 }
 
-.hinge-like svg {
-  width: var(--spacing-20);
-  height: var(--spacing-20);
+.phone-notif-text {
+  overflow: hidden;
+  color: var(--color-slate);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--tracking-caption);
+  line-height: var(--leading-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.device-screen:hover .phone-notif {
+  animation: phone-notif-stack 5200ms ease-in-out var(--notif-delay, 0ms) infinite;
+}
+
+.device-frame.is-mobile-revealed .phone-notif {
+  animation: phone-notif-stack 5200ms ease-in-out var(--notif-delay, 0ms) infinite;
+}
+
+/* Drop in, settle, then age downward into the stack like iOS Notification
+   Center. Several staggered cards are visible at once before fading out. */
+@keyframes phone-notif-stack {
+  0% {
+    opacity: 0;
+    transform: translateY(-140%) scale(0.98);
+  }
+  5% {
+    opacity: 1;
+    transform: translateY(var(--spacing-6)) scale(1);
+  }
+  8% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  11% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  18% {
+    opacity: 0.94;
+    transform: translateY(var(--spacing-24)) scale(0.975);
+  }
+  32% {
+    opacity: 0.72;
+    transform: translateY(var(--spacing-40)) scale(0.94);
+  }
+  46% {
+    opacity: 0.42;
+    transform: translateY(var(--spacing-60)) scale(0.9);
+  }
+  60% {
+    opacity: 0;
+    transform: translateY(var(--spacing-80)) scale(0.86);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--spacing-80)) scale(0.86);
+  }
 }
 
 .device-mockup {
@@ -780,6 +990,10 @@ input {
      lower body is hidden by the solid wash below, not made transparent. */
   .device-frame {
     width: min(76vw, 300px);
+  }
+
+  .device-frame.is-mobile-revealed {
+    animation: device-notification-vibrate 650ms ease-in-out infinite;
   }
 
   .mobile-scrim {
